@@ -1,5 +1,5 @@
 /// SQLite ORM package for Flutter/Dart
-/// 
+///
 /// A comprehensive ORM solution with cross-platform support,
 /// automatic migrations, relationship handling, and query builder.
 library sqflite_orm;
@@ -33,4 +33,3 @@ export 'src/relationships/association_loader.dart';
 
 // Transactions
 export 'src/transactions/transaction_manager.dart';
-

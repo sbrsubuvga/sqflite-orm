@@ -102,4 +102,3 @@ class SchemaValidationError implements Exception {
   @override
   String toString() => 'SchemaValidationError: $message';
 }
-

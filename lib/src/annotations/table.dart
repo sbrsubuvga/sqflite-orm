@@ -5,4 +5,3 @@ class Table {
 
   const Table({required this.name});
 }
-

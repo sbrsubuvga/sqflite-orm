@@ -23,7 +23,6 @@ class WebUI {
     String? password,
     bool tryNextPort = true,
   }) async {
-
     final authHandler = AuthHandler(password: password);
     final tablesRoute = TablesRoute(database);
     final dataRoute = DataRoute(database);
@@ -40,21 +39,25 @@ class WebUI {
       return await tablesRoute.listTables();
     });
 
-    router.get('/api/tables/<tableName>', (Request request, String tableName) async {
+    router.get('/api/tables/<tableName>',
+        (Request request, String tableName) async {
       if (!authHandler.isAuthenticated(request)) {
         return Response.forbidden('Authentication required');
       }
       return await tablesRoute.getTableInfo(tableName);
     });
 
-    router.get('/api/tables/<tableName>/data', (Request request, String tableName) async {
+    router.get('/api/tables/<tableName>/data',
+        (Request request, String tableName) async {
       if (!authHandler.isAuthenticated(request)) {
         return Response.forbidden('Authentication required');
       }
 
       final params = request.url.queryParameters;
-      final page = params['page'] != null ? int.tryParse(params['page']!) : null;
-      final pageSize = params['pageSize'] != null ? int.tryParse(params['pageSize']!) : null;
+      final page =
+          params['page'] != null ? int.tryParse(params['page']!) : null;
+      final pageSize =
+          params['pageSize'] != null ? int.tryParse(params['pageSize']!) : null;
       final search = params['search'];
       final sortBy = params['sortBy'];
       final sortDesc = params['sortDesc'] == 'true';
@@ -69,7 +72,8 @@ class WebUI {
       );
     });
 
-    router.post('/api/tables/<tableName>/data', (Request request, String tableName) async {
+    router.post('/api/tables/<tableName>/data',
+        (Request request, String tableName) async {
       if (!authHandler.isAuthenticated(request)) {
         return Response.forbidden('Authentication required');
       }
@@ -80,7 +84,8 @@ class WebUI {
       return await dataRoute.insertRow(tableName, data);
     });
 
-    router.put('/api/tables/<tableName>/data/<id>', (Request request, String tableName, String id) async {
+    router.put('/api/tables/<tableName>/data/<id>',
+        (Request request, String tableName, String id) async {
       if (!authHandler.isAuthenticated(request)) {
         return Response.forbidden('Authentication required');
       }
@@ -89,7 +94,8 @@ class WebUI {
       final data = jsonDecode(body) as Map<String, dynamic>;
 
       // Try to determine the primary key column
-      final tableInfo = await database.rawQuery("PRAGMA table_info('$tableName')");
+      final tableInfo =
+          await database.rawQuery("PRAGMA table_info('$tableName')");
       String pkColumn = 'ID';
       try {
         final pkRow = tableInfo.firstWhere(
@@ -103,13 +109,15 @@ class WebUI {
       return await dataRoute.updateRow(tableName, pkColumn, id, data);
     });
 
-    router.delete('/api/tables/<tableName>/data/<id>', (Request request, String tableName, String id) async {
+    router.delete('/api/tables/<tableName>/data/<id>',
+        (Request request, String tableName, String id) async {
       if (!authHandler.isAuthenticated(request)) {
         return Response.forbidden('Authentication required');
       }
 
       // Try to determine the primary key column
-      final tableInfo = await database.rawQuery("PRAGMA table_info('$tableName')");
+      final tableInfo =
+          await database.rawQuery("PRAGMA table_info('$tableName')");
       String pkColumn = 'ID';
       try {
         final pkRow = tableInfo.firstWhere(
@@ -136,7 +144,8 @@ class WebUI {
       return await queryRoute.executeQuery(sql, args: args);
     });
 
-    router.get('/api/schema/<tableName>', (Request request, String tableName) async {
+    router.get('/api/schema/<tableName>',
+        (Request request, String tableName) async {
       if (!authHandler.isAuthenticated(request)) {
         return Response.forbidden('Authentication required');
       }
@@ -145,7 +154,8 @@ class WebUI {
 
     // Serve static files (web UI)
     router.get('/', (Request request) {
-      return Response.ok(_getWebUIHtml(), headers: {'Content-Type': 'text/html'});
+      return Response.ok(_getWebUIHtml(),
+          headers: {'Content-Type': 'text/html'});
     });
 
     // Apply middleware
@@ -173,18 +183,17 @@ class WebUI {
         );
         break; // Success
       } on SocketException catch (e) {
-        if (e.osError?.errorCode == 48 || e.message.contains('Address already in use')) {
+        if (e.osError?.errorCode == 48 ||
+            e.message.contains('Address already in use')) {
           if (attempts < maxAttempts - 1) {
             actualPort++;
             attempts++;
             print('Port $port is in use, trying port $actualPort...');
             continue;
           } else {
-            throw Exception(
-              'Port $port is already in use. '
-              'Please stop the existing server or use a different port.\n'
-              'You can stop the existing server with: lsof -ti:$port | xargs kill'
-            );
+            throw Exception('Port $port is already in use. '
+                'Please stop the existing server or use a different port.\n'
+                'You can stop the existing server with: lsof -ti:$port | xargs kill');
           }
         } else {
           rethrow;
@@ -198,7 +207,8 @@ class WebUI {
 
     print('✓ Web UI server started at http://localhost:$actualPort');
     if (actualPort != port) {
-      print('  (Requested port $port was in use, using port $actualPort instead)');
+      print(
+          '  (Requested port $port was in use, using port $actualPort instead)');
     }
     if (password != null && password.isNotEmpty) {
       print('✓ Password protection enabled. Use ?password=$password in URL');
@@ -828,4 +838,3 @@ class WebUI {
 ''';
   }
 }
-

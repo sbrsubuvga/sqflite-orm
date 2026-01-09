@@ -4,13 +4,16 @@ A comprehensive Flutter/Dart SQLite ORM package with cross-platform support (des
 
 ## Features
 
-- **Cross-Platform**: Automatic detection and initialization for desktop (Windows, Linux, macOS) and mobile (Android, iOS)
+- **Cross-Platform**: Automatic FFI initialization for desktop (Windows, Linux, macOS) and mobile (Android, iOS)
 - **Type-Safe ORM**: Strong typing with Dart generics
+- **Simplified Registration**: Automatic column inference from models - no boilerplate needed
 - **Runtime Validation**: Schema mismatch detection at runtime
 - **Automatic Migrations**: Generate migrations from model changes
-- **Relationships**: Full support for SQLite-compatible relationships (OneToMany, ManyToOne, ManyToMany)
-- **Query Builder**: Fluent, type-safe query API
-- **Web UI**: Full-featured database management interface accessible at localhost:4800
+- **Associations**: Full support for eager loading with `include()` (Sequelize-style)
+- **Query Builder**: Fluent, type-safe query API with `findAll()`, `findOne()`, `findByPk()`
+- **CRUD Operations**: `create()`, `insert()`, `update()`, `delete()` methods
+- **Web UI**: Full-featured database management interface with pagination and table browser
+- **Web Debug Mode**: Automatically start Web UI during development
 - **Transactions**: Full transaction support with rollback
 
 ## Installation
@@ -22,167 +25,304 @@ dependencies:
   sqflite_orm: ^0.1.0
 ```
 
-## Usage
+## Quick Start
 
 ### 1. Define Your Models
 
 ```dart
 import 'package:sqflite_orm/sqflite_orm.dart';
 
-@Table(name: 'salesData')
-class SalesData extends BaseModel {
+@Table(name: 'users')
+class User extends BaseModel {
   @PrimaryKey()
-  @Column(name: 'ID')
+  @Column(name: 'id')
   int? id;
   
-  @Column(name: 'NO')
-  int? no;
+  @Column(name: 'name')
+  String? name;
   
-  @Column(name: 'SDate', defaultValue: 'CURRENT_TIMESTAMP')
-  DateTime? sDate;
+  @Column(name: 'email')
+  String? email;
   
-  @Column(name: 'GrandAmount')
-  double? grandAmount;
-  
-  @ManyToOne(targetType: CustomerData, foreignKey: 'Customer_Id')
-  CustomerData? customer;
+  @Column(name: 'createdAt')
+  DateTime? createdAt;
 
   @override
   Map<String, dynamic> toMap() {
     return {
-      'ID': id,
-      'NO': no,
-      'SDate': sDate?.toIso8601String(),
-      'GrandAmount': grandAmount,
-      'Customer_Id': customer?.id,
+      'id': id,
+      'name': name,
+      'email': email,
+      'createdAt': createdAt?.toIso8601String(),
     };
   }
 
   @override
   BaseModel fromMap(Map<String, dynamic> map) {
-    return SalesData()
-      ..id = map['ID'] as int?
-      ..no = map['NO'] as int?
-      ..sDate = map['SDate'] != null ? DateTime.parse(map['SDate']) : null
-      ..grandAmount = map['GrandAmount'] as double?
-      ..customer = map['Customer_Id'] != null 
-          ? CustomerData()..id = map['Customer_Id'] as int
+    return User()
+      ..id = map['id'] as int?
+      ..name = map['name'] as String?
+      ..email = map['email'] as String?
+      ..createdAt = map['createdAt'] != null 
+          ? DateTime.parse(map['createdAt']) 
           : null;
   }
 
   @override
-  String get tableName => 'salesData';
+  String get tableName => 'users';
 }
 ```
 
-### 2. Register Models
-
-Before using models, you must register them:
+### 2. Initialize Database
 
 ```dart
-SimpleModelRegistrar.register<SalesData>(
-  tableName: 'salesData',
-  columns: {
-    'ID': SimpleModelRegistrar.column(
-      name: 'ID',
-      sqlType: 'INTEGER',
-      nullable: false,
-      isPrimaryKey: true,
-      autoIncrement: true,
-    ),
-    'NO': SimpleModelRegistrar.column(
-      name: 'NO',
-      sqlType: 'INTEGER',
-      nullable: true,
-    ),
-    // ... more columns
+final db = await DatabaseManager.initialize(
+  path: 'app.db',
+  version: 1,
+  models: [User, Post, Comment],
+  instanceCreators: {
+    User: () => User(),
+    Post: () => Post(),
+    Comment: () => Comment(),
   },
-  primaryKey: 'ID',
+  // Optional: Enable Web UI for development
+  webDebug: true,
+  webDebugPort: 4800,
 );
 ```
 
-### 3. Initialize Database
+**Note**: FFI initialization is handled automatically for desktop platforms. No manual setup needed!
+
+### 3. CRUD Operations
+
+#### Create Records
 
 ```dart
-// For Flutter apps
-final db = await DatabaseManager.initialize(
-  path: 'app.db',
-  version: 1,
-  models: [SalesData, CustomerData, OrderData],
-);
+// Method 1: Using create() - returns model instance
+final user = await db.query<User>().create({
+  'name': 'John Doe',
+  'email': 'john@example.com',
+  'createdAt': DateTime.now(),
+});
+print('Created user: ${user.name} (ID: ${user.id})');
 
-// For pure Dart (desktop)
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
-import 'dart:io';
-
-if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-  ffi.sqfliteFfiInit();
-  databaseFactory = ffi.databaseFactoryFfiNoIsolate;
-}
-
-final db = await DatabaseManager.initialize(
-  path: 'app.db',
-  version: 1,
-  models: [SalesData, CustomerData, OrderData],
-);
+// Method 2: Using insert() - returns inserted ID
+final user = User()
+  ..name = 'Jane Smith'
+  ..email = 'jane@example.com';
+final id = await db.query<User>().insert(user);
 ```
 
-### 4. Use Query Builder
+#### Read Records
 
 ```dart
-// Find all sales with amount greater than 1000
-final sales = await db.query<SalesData>()
-  .whereClause(WhereClause().greaterThan('GrandAmount', 1000))
-  .orderBy('SDate', descending: true)
-  .limit(10)
+// Find all records
+final users = await db.query<User>().findAll();
+
+// Find one record
+final user = await db.query<User>().findOne();
+
+// Find by primary key
+final user = await db.query<User>().findByPk(123);
+
+// Find with conditions
+final users = await db.query<User>()
+  .whereClause(WhereClause().equals('email', 'john@example.com'))
   .findAll();
 
-// Find first record
-final firstSale = await db.query<SalesData>().findFirst();
+// Find with ordering and pagination
+final users = await db.query<User>()
+  .orderBy('createdAt', descending: true)
+  .limit(10)
+  .offset(0)
+  .findAll();
 
 // Count records
-final count = await db.query<SalesData>()
-  .whereClause(WhereClause().equals('Customer_Id', 123))
+final count = await db.query<User>()
+  .whereClause(WhereClause().equals('active', true))
   .count();
 ```
 
-### 5. Start Web UI
+#### Update Records
 
 ```dart
-import 'package:sqflite_orm/web_ui.dart';
+// Update using model instance
+final user = await db.query<User>().findByPk(123);
+if (user != null) {
+  user.name = 'Updated Name';
+  await db.query<User>().update(user);
+}
 
-// Start web UI server
-await WebUI.start(
-  db.database,
-  port: 4800,
-  password: 'dev123', // Optional
-);
-
-// Access at http://localhost:4800
-// If password is set, use: http://localhost:4800?password=dev123
+// Update using values map
+final rowsUpdated = await db.query<User>()
+  .whereClause(WhereClause().equals('id', 123))
+  .updateValues({'name': 'Updated Name'});
 ```
 
-### 6. Use Transactions
+#### Delete Records
 
 ```dart
+// Delete with conditions
+final rowsDeleted = await db.query<User>()
+  .whereClause(WhereClause().equals('id', 123))
+  .delete();
+```
+
+### 4. Associations (Eager Loading)
+
+Register relationships and use `include()` for eager loading, similar to Sequelize:
+
+```dart
+// Register relationships (after database initialization)
+final registry = ModelRegistry();
+final postInfo = registry.getInfo(Post);
+if (postInfo != null) {
+  final updatedInfo = ModelInfo(
+    tableName: postInfo.tableName,
+    modelType: postInfo.modelType,
+    columns: postInfo.columns,
+    primaryKey: postInfo.primaryKey,
+    foreignKeys: postInfo.foreignKeys,
+    relationships: {
+      'author': RelationshipInfo(
+        type: 'ManyToOne',
+        targetType: User,
+        foreignKey: 'userId',
+      ),
+      'comments': RelationshipInfo(
+        type: 'OneToMany',
+        targetType: Comment,
+        foreignKey: 'postId',
+      ),
+    },
+    factory: postInfo.factory,
+  );
+  registry.register(Post, updatedInfo);
+}
+
+// Use include() for eager loading
+final post = await db.query<Post>()
+  .include(['author', 'comments'])
+  .findByPk(1);
+
+// Access loaded relationships
+final author = post?.getRelation<User>('author');
+final comments = post?.getRelationList<Comment>('comments') ?? [];
+
+// findAll() with include
+final posts = await db.query<Post>()
+  .include(['author'])
+  .findAll();
+
+// findOne() with include
+final user = await db.query<User>()
+  .include(['posts'])
+  .findOne();
+```
+
+### 5. Transactions
+
+```dart
+// Use queryWithTransaction() inside transactions
 await db.transaction((txn) async {
-  // Your database operations here
-  await txn.insert('salesData', data1);
-  await txn.insert('salesData', data2);
+  final user1 = await db.queryWithTransaction<User>(txn).create({
+    'name': 'User 1',
+    'email': 'user1@example.com',
+  });
+  
+  final user2 = await db.queryWithTransaction<User>(txn).create({
+    'name': 'User 2',
+    'email': 'user2@example.com',
+  });
+  
   // If any operation fails, transaction is rolled back automatically
 });
 ```
 
+### 6. Web Debug Mode
+
+Enable Web UI automatically during development:
+
+```dart
+final db = await DatabaseManager.initialize(
+  path: 'app.db',
+  version: 1,
+  models: [User, Post],
+  instanceCreators: {
+    User: () => User(),
+    Post: () => Post(),
+  },
+  // Automatically start Web UI
+  webDebug: true,
+  webDebugPort: 4800,
+  // webDebugPassword: 'secret', // Optional password protection
+);
+
+// Access at http://localhost:4800
+```
+
 ## Web UI Features
 
-The web UI provides:
+The web UI provides a modern interface for database management:
 
-- **Table Browser**: View all tables in your database
+- **Table Browser**: Left sidebar listing all database tables
 - **Data Grid**: Browse and view table data with pagination
+- **Pagination**: Configurable page size (10, 25, 50, 100, 200 rows)
 - **SQL Query Editor**: Execute custom SQL queries
 - **Schema Viewer**: View table structure and column information
+- **Password Protection**: Optional authentication for secure access
 
 Access the web UI at `http://localhost:4800` (or your configured port).
+
+## Query Builder API
+
+### Find Methods
+
+```dart
+// Find all
+final users = await db.query<User>().findAll();
+
+// Find first
+final user = await db.query<User>().findFirst();
+
+// Find one (alias for findFirst)
+final user = await db.query<User>().findOne();
+
+// Find by primary key
+final user = await db.query<User>().findByPk(123);
+```
+
+### Where Clauses
+
+```dart
+// Equals
+.whereClause(WhereClause().equals('email', 'john@example.com'))
+
+// Greater than
+.whereClause(WhereClause().greaterThan('age', 18))
+
+// Less than
+.whereClause(WhereClause().lessThan('age', 65))
+
+// Multiple conditions
+.whereClause(WhereClause()
+  .equals('status', 'active')
+  .greaterThan('createdAt', DateTime(2024, 1, 1)))
+```
+
+### Ordering and Pagination
+
+```dart
+.orderBy('createdAt', descending: true)
+.limit(10)
+.offset(20)
+```
+
+### Associations
+
+```dart
+.include(['author', 'comments', 'tags'])
+```
 
 ## Annotations
 
@@ -190,16 +330,16 @@ Access the web UI at `http://localhost:4800` (or your configured port).
 Marks a class as a database table.
 
 ```dart
-@Table(name: 'salesData')
-class SalesData extends BaseModel { ... }
+@Table(name: 'users')
+class User extends BaseModel { ... }
 ```
 
 ### @Column
 Marks a field as a database column.
 
 ```dart
-@Column(name: 'NO', nullable: true)
-int? no;
+@Column(name: 'email')
+String? email;
 ```
 
 ### @PrimaryKey
@@ -207,7 +347,7 @@ Marks a field as a primary key.
 
 ```dart
 @PrimaryKey()
-@Column(name: 'ID')
+@Column(name: 'id')
 int? id;
 ```
 
@@ -215,33 +355,19 @@ int? id;
 Marks a field as a foreign key.
 
 ```dart
-@ForeignKey(table: 'customerData', column: 'Customer_ID')
-@Column(name: 'Customer_Id')
-int? customerId;
+@ForeignKey(table: 'users', column: 'id')
+@Column(name: 'userId')
+int? userId;
 ```
-
-### @OneToMany, @ManyToOne, @ManyToMany
-Define relationships between models.
-
-```dart
-@OneToMany(targetType: OrderItem, foreignKey: 'Order_Id')
-List<OrderItem>? items;
-
-@ManyToOne(targetType: CustomerData, foreignKey: 'Customer_Id')
-CustomerData? customer;
-```
-
-## Schema Validation
-
-The package automatically validates your database schema against model definitions at runtime. If there are mismatches (extra columns, missing columns, type mismatches), warnings or errors will be shown.
 
 ## Migrations
 
 Migrations are handled automatically. When you change your models and increment the version number, the package will:
 
-1. Detect new columns
-2. Add missing columns to existing tables
-3. Validate schema changes
+1. Detect new tables
+2. Create missing tables
+3. Add missing columns to existing tables
+4. Validate schema changes
 
 For complex migrations, you can provide a custom `onUpgrade` callback:
 
@@ -249,37 +375,82 @@ For complex migrations, you can provide a custom `onUpgrade` callback:
 final db = await DatabaseManager.initialize(
   path: 'app.db',
   version: 2,
-  models: [SalesData, CustomerData],
+  models: [User, Post],
+  instanceCreators: {
+    User: () => User(),
+    Post: () => Post(),
+  },
   onUpgrade: (db, oldVersion, newVersion) async {
     if (oldVersion < 2) {
-      await db.execute('ALTER TABLE salesData ADD COLUMN newField TEXT');
+      // Custom migration logic
+      await db.execute('ALTER TABLE users ADD COLUMN phone TEXT');
     }
   },
 );
 ```
 
-## Running the Example
+## Complete Example
 
-### For Flutter Apps
-The example works directly in Flutter apps.
+See `example/example.dart` for a comprehensive example including:
 
-### For Pure Dart (Desktop)
-Run the example with:
+- Model definitions
+- CRUD operations
+- Associations and eager loading
+- Transactions
+- Complex queries
+- Web UI integration
+
+Run the example:
 
 ```bash
 dart run example/example.dart
 ```
 
-**Note**: For pure Dart execution, make sure you're on a desktop platform (Windows, Linux, macOS) and have initialized FFI:
+## API Reference
+
+### DatabaseManager
 
 ```dart
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
-import 'dart:io';
+static Future<DatabaseManager> initialize({
+  required String path,
+  required int version,
+  required List<Type> models,
+  Map<Type, BaseModel Function()>? instanceCreators,
+  Database? Function(Database db, int oldVersion, int newVersion)? onUpgrade,
+  Database? Function(Database db, int version)? onCreate,
+  bool webDebug = false,
+  int webDebugPort = 4800,
+  String? webDebugPassword,
+})
+```
 
-if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-  ffi.sqfliteFfiInit();
-  databaseFactory = ffi.databaseFactoryFfiNoIsolate;
-}
+### QueryBuilder
+
+```dart
+// Query methods
+Future<List<T>> findAll()
+Future<T?> findFirst()
+Future<T?> findOne()
+Future<T?> findByPk(dynamic primaryKeyValue)
+Future<int> count()
+Future<int> delete()
+
+// CRUD methods
+Future<T> create(Map<String, dynamic> values)
+Future<int> insert(T model)
+Future<int> update(T model)
+Future<int> updateValues(Map<String, dynamic> values)
+
+// Query building
+QueryBuilder<T> whereClause(WhereClause clause)
+QueryBuilder<T> orderBy(String column, {bool descending = false})
+QueryBuilder<T> limit(int count)
+QueryBuilder<T> offset(int count)
+QueryBuilder<T> include(List<String> associations)
+QueryBuilder<T> select(List<String> columns)
+
+// Transactions
+QueryBuilder<T> queryWithTransaction(Transaction txn)
 ```
 
 ## License

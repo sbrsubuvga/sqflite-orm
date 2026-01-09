@@ -19,4 +19,3 @@ class ForeignKey {
     this.onUpdateCascade = false,
   });
 }
-

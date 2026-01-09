@@ -15,13 +15,15 @@ class SchemaRoute {
         "PRAGMA table_info('$tableName')",
       );
 
-      final columns = tableInfo.map((row) => {
-        'name': row['name'],
-        'type': row['type'],
-        'notnull': row['notnull'] == 1,
-        'dflt_value': row['dflt_value'],
-        'pk': row['pk'] == 1,
-      }).toList();
+      final columns = tableInfo
+          .map((row) => {
+                'name': row['name'],
+                'type': row['type'],
+                'notnull': row['notnull'] == 1,
+                'dflt_value': row['dflt_value'],
+                'pk': row['pk'] == 1,
+              })
+          .toList();
 
       return Response.ok(
         jsonEncode({
@@ -59,4 +61,3 @@ class SchemaRoute {
     }
   }
 }
-

@@ -2,7 +2,7 @@ import 'package:sqflite_orm/src/models/base_model.dart';
 import 'package:sqflite_orm/src/models/model_registry.dart';
 
 /// Simplified model registration - manually register models
-/// 
+///
 /// This is a manual registration system. For automatic registration
 /// from annotations, use code generation (build_runner + source_gen).
 class SimpleModelRegistrar {
@@ -17,7 +17,7 @@ class SimpleModelRegistrar {
     T Function()? instanceCreator,
   }) {
     final registry = ModelRegistry();
-    
+
     // If factory is not provided but instanceCreator is, use fromMap
     BaseModel Function(Map<String, dynamic>)? finalFactory = factory;
     if (finalFactory == null && instanceCreator != null) {
@@ -26,7 +26,7 @@ class SimpleModelRegistrar {
         return instance.fromMap(map);
       };
     }
-    
+
     final modelInfo = ModelInfo(
       tableName: tableName,
       modelType: T,
@@ -38,12 +38,12 @@ class SimpleModelRegistrar {
     );
     registry.register<T>(T, modelInfo);
   }
-  
+
   /// Create a factory from a model's fromMap method
-  /// 
+  ///
   /// This helper eliminates duplication by using the model's fromMap method
   /// instead of requiring a separate factory function.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// SimpleModelRegistrar.register<User>(
@@ -52,7 +52,8 @@ class SimpleModelRegistrar {
   ///   instanceCreator: () => User(), // Used to call fromMap
   /// );
   /// ```
-  static BaseModel Function(Map<String, dynamic>) factoryFromMap<T extends BaseModel>(
+  static BaseModel Function(Map<String, dynamic>)
+      factoryFromMap<T extends BaseModel>(
     T Function() instanceCreator,
   ) {
     return (Map<String, dynamic> map) {
@@ -60,12 +61,12 @@ class SimpleModelRegistrar {
       return instance.fromMap(map);
     };
   }
-  
+
   /// Simple registration - automatically infers columns from model
-  /// 
+  ///
   /// This method extracts table name and infers column information from the model.
   /// Column types are inferred from toMap() values with sensible defaults.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// SimpleModelRegistrar.registerModel<User>(
@@ -83,10 +84,10 @@ class SimpleModelRegistrar {
     // Get table name from model instance
     final instance = instanceCreator();
     final tableName = instance.tableName;
-    
+
     // If columns not provided, infer from toMap()
     final finalColumns = columns ?? inferColumnsFromModel(instance, primaryKey);
-    
+
     register<T>(
       tableName: tableName,
       columns: finalColumns,
@@ -96,7 +97,7 @@ class SimpleModelRegistrar {
       instanceCreator: instanceCreator,
     );
   }
-  
+
   /// Infer column information from model's toMap() method
   /// Made public for use in auto-registration
   static Map<String, ColumnInfo> inferColumnsFromModel(
@@ -105,17 +106,17 @@ class SimpleModelRegistrar {
   ) {
     final columns = <String, ColumnInfo>{};
     final map = instance.toMap();
-    
+
     for (final entry in map.entries) {
       final columnName = entry.key;
       final value = entry.value;
-      
+
       final isPrimaryKey = columnName == primaryKey;
-      
+
       // Infer SQL type from Dart type
       String sqlType;
       bool nullable = value == null;
-      
+
       if (value is int) {
         sqlType = 'INTEGER';
       } else if (value is double || value is num) {
@@ -132,9 +133,9 @@ class SimpleModelRegistrar {
           sqlType = 'INTEGER'; // Primary keys are usually integers
         } else if (columnName.toLowerCase().contains('id')) {
           sqlType = 'INTEGER'; // IDs are usually integers
-        } else if (columnName.toLowerCase().contains('date') || 
-                   columnName.toLowerCase().contains('time') ||
-                   columnName.toLowerCase().contains('at')) {
+        } else if (columnName.toLowerCase().contains('date') ||
+            columnName.toLowerCase().contains('time') ||
+            columnName.toLowerCase().contains('at')) {
           sqlType = 'TEXT'; // Date/time fields are TEXT (ISO strings)
         } else {
           sqlType = 'TEXT'; // Default to TEXT for unknown types
@@ -144,12 +145,12 @@ class SimpleModelRegistrar {
         sqlType = 'TEXT'; // Default to TEXT for unknown types
         nullable = true;
       }
-      
+
       // Primary keys are typically not nullable (unless explicitly null in toMap)
       // If primary key is null, assume auto-increment
       final finalNullable = isPrimaryKey ? false : nullable;
       final autoIncrement = isPrimaryKey && value == null;
-      
+
       columns[columnName] = ColumnInfo(
         name: columnName,
         dartType: _sqlTypeToDartType(sqlType),
@@ -159,7 +160,7 @@ class SimpleModelRegistrar {
         autoIncrement: autoIncrement,
       );
     }
-    
+
     return columns;
   }
 
@@ -182,7 +183,7 @@ class SimpleModelRegistrar {
       autoIncrement: autoIncrement,
     );
   }
-  
+
   static String _sqlTypeToDartType(String sqlType) {
     switch (sqlType.toUpperCase()) {
       case 'INTEGER':
@@ -200,4 +201,3 @@ class SimpleModelRegistrar {
     }
   }
 }
-

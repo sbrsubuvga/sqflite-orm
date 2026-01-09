@@ -8,4 +8,3 @@ export 'src/web_ui/routes/query_route.dart';
 export 'src/web_ui/routes/schema_route.dart';
 export 'src/web_ui/handlers/auth_handler.dart';
 export 'src/web_ui/handlers/cors_handler.dart';
-

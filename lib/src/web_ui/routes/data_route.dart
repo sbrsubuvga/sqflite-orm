@@ -30,15 +30,15 @@ class DataRoute {
         final tableInfo = await _db.rawQuery("PRAGMA table_info('$tableName')");
         final columnNames = tableInfo
             .map((row) => row['name'] as String)
-            .where((name) => name.toLowerCase().contains('text') ||
+            .where((name) =>
+                name.toLowerCase().contains('text') ||
                 name.toLowerCase().contains('name') ||
                 name.toLowerCase().contains('id'))
             .toList();
 
         if (columnNames.isNotEmpty) {
-          final conditions = columnNames
-              .map((col) => '$col LIKE ?')
-              .join(' OR ');
+          final conditions =
+              columnNames.map((col) => '$col LIKE ?').join(' OR ');
           query += ' WHERE $conditions';
           args.addAll(List.filled(columnNames.length, '%$search%'));
         }
@@ -80,7 +80,8 @@ class DataRoute {
   }
 
   /// Insert a new row
-  Future<Response> insertRow(String tableName, Map<String, dynamic> data) async {
+  Future<Response> insertRow(
+      String tableName, Map<String, dynamic> data) async {
     try {
       final id = await _db.insert(tableName, data);
       return Response.ok(
@@ -123,7 +124,8 @@ class DataRoute {
   }
 
   /// Delete a row
-  Future<Response> deleteRow(String tableName, String idColumn, dynamic id) async {
+  Future<Response> deleteRow(
+      String tableName, String idColumn, dynamic id) async {
     try {
       final count = await _db.delete(
         tableName,
@@ -143,4 +145,3 @@ class DataRoute {
     }
   }
 }
-

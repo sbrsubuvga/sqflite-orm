@@ -6,7 +6,7 @@ import 'package:sqflite_orm/src/query/where_clause.dart';
 import 'package:sqflite_orm/src/relationships/association_loader.dart';
 
 /// Fluent query builder for type-safe database queries
-/// 
+///
 /// Can work with both Database and Transaction objects.
 /// When inside a transaction, always use the Transaction object.
 class QueryBuilder<T extends BaseModel> {
@@ -26,10 +26,11 @@ class QueryBuilder<T extends BaseModel> {
   List<String> _selectColumns = [];
 
   /// Create a query builder with a Database or Transaction
-  /// 
+  ///
   /// When inside a transaction callback, pass the Transaction object
   /// to ensure all operations use the transaction.
-  QueryBuilder(this._db, this._modelType) : _modelInfo = ModelRegistry().getInfo(_modelType);
+  QueryBuilder(this._db, this._modelType)
+      : _modelInfo = ModelRegistry().getInfo(_modelType);
 
   /// Add a WHERE clause
   QueryBuilder<T> where(String column) {
@@ -88,9 +89,9 @@ class QueryBuilder<T extends BaseModel> {
   }
 
   /// Include relationships (eager loading)
-  /// 
+  ///
   /// Alias for `include()` - Sequelize-style method name
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final posts = await db.query<Post>()
@@ -103,15 +104,15 @@ class QueryBuilder<T extends BaseModel> {
   }
 
   /// Include associations (eager loading) - Sequelize-style
-  /// 
+  ///
   /// Alias for `withRelations()` - provides Sequelize-compatible API
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final posts = await db.query<Post>()
   ///   .include(['author', 'comments'])
   ///   .findAll();
-  /// 
+  ///
   /// final post = await db.query<Post>()
   ///   .include(['author'])
   ///   .findOne();
@@ -128,21 +129,21 @@ class QueryBuilder<T extends BaseModel> {
   }
 
   /// Find all matching records
-  /// 
+  ///
   /// Returns a list of all matching records.
   /// Supports eager loading via `include()` or `withRelations()`.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// // Without associations
   /// final users = await db.query<User>().findAll();
-  /// 
+  ///
   /// // With associations (eager loading)
   /// final posts = await db.query<Post>()
   ///   .include(['author', 'comments'])
   ///   .whereClause(WhereClause().equals('published', 1))
   ///   .findAll();
-  /// 
+  ///
   /// // Access loaded associations
   /// for (final post in posts) {
   ///   final author = post.getRelation<User>('author');
@@ -155,9 +156,7 @@ class QueryBuilder<T extends BaseModel> {
     }
 
     final tableName = _modelInfo!.tableName;
-    final columns = _selectColumns.isEmpty
-        ? '*'
-        : _selectColumns.join(', ');
+    final columns = _selectColumns.isEmpty ? '*' : _selectColumns.join(', ');
 
     var query = 'SELECT $columns FROM $tableName';
 
@@ -195,17 +194,18 @@ class QueryBuilder<T extends BaseModel> {
 
     // Load relationships if requested
     if (_relations.isNotEmpty) {
-      await AssociationLoader().loadRelations(_db, models, _relations, _modelInfo!);
+      await AssociationLoader()
+          .loadRelations(_db, models, _relations, _modelInfo!);
     }
 
     return models;
   }
 
   /// Find first matching record
-  /// 
+  ///
   /// Returns the first matching record or null if none found.
   /// Supports eager loading via `include()` or `withRelations()`.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final user = await db.query<User>()
@@ -219,11 +219,11 @@ class QueryBuilder<T extends BaseModel> {
   }
 
   /// Find one matching record - Sequelize-style alias
-  /// 
+  ///
   /// Alias for `findFirst()` - provides Sequelize-compatible API.
   /// Returns the first matching record or null if none found.
   /// Supports eager loading via `include()` or `withRelations()`.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final user = await db.query<User>()
@@ -236,16 +236,16 @@ class QueryBuilder<T extends BaseModel> {
   }
 
   /// Find a record by primary key
-  /// 
+  ///
   /// Similar to Sequelize's findByPk method.
   /// Returns the model instance if found, null otherwise.
   /// Supports eager loading via `include()` or `withRelations()`.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// // Without associations
   /// final user = await db.query<User>().findByPk(123);
-  /// 
+  ///
   /// // With associations (eager loading)
   /// final user = await db.query<User>()
   ///   .include(['posts', 'comments'])
@@ -258,13 +258,12 @@ class QueryBuilder<T extends BaseModel> {
 
     final primaryKey = _modelInfo!.primaryKey;
     if (primaryKey == null) {
-      throw StateError('Model ${_modelType} does not have a primary key defined');
+      throw StateError(
+          'Model ${_modelType} does not have a primary key defined');
     }
 
     final tableName = _modelInfo!.tableName;
-    final columns = _selectColumns.isEmpty
-        ? '*'
-        : _selectColumns.join(', ');
+    final columns = _selectColumns.isEmpty ? '*' : _selectColumns.join(', ');
 
     var query = 'SELECT $columns FROM $tableName WHERE $primaryKey = ?';
     final args = <dynamic>[primaryKeyValue];
@@ -293,7 +292,8 @@ class QueryBuilder<T extends BaseModel> {
 
     // Load relationships if requested
     if (_relations.isNotEmpty) {
-      await AssociationLoader().loadRelations(_db, [model], _relations, _modelInfo!);
+      await AssociationLoader()
+          .loadRelations(_db, [model], _relations, _modelInfo!);
     }
 
     return model;
@@ -339,10 +339,10 @@ class QueryBuilder<T extends BaseModel> {
   }
 
   /// Create a new record (Sequelize-style)
-  /// 
+  ///
   /// Similar to Sequelize's Model.create()
   /// Accepts a Map<String, dynamic> and returns the created model instance
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final user = await db.query<User>().create({
@@ -387,7 +387,8 @@ class QueryBuilder<T extends BaseModel> {
     final placeholders = List.filled(columns.length, '?').join(', ');
     final args = data.values.toList();
 
-    final query = 'INSERT INTO $tableName (${columns.join(', ')}) VALUES ($placeholders)';
+    final query =
+        'INSERT INTO $tableName (${columns.join(', ')}) VALUES ($placeholders)';
 
     final insertedId = await _db.rawInsert(query, args);
 
@@ -412,10 +413,10 @@ class QueryBuilder<T extends BaseModel> {
   }
 
   /// Insert a new record using a model instance
-  /// 
+  ///
   /// Similar to Sequelize's instance.save() for new records
   /// Returns the inserted row ID
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final user = User()..name = 'John'..email = 'john@example.com';
@@ -458,17 +459,18 @@ class QueryBuilder<T extends BaseModel> {
     final placeholders = List.filled(columns.length, '?').join(', ');
     final args = values.values.toList();
 
-    final query = 'INSERT INTO $tableName (${columns.join(', ')}) VALUES ($placeholders)';
+    final query =
+        'INSERT INTO $tableName (${columns.join(', ')}) VALUES ($placeholders)';
 
     return await _db.rawInsert(query, args);
   }
 
   /// Update records (Sequelize-style)
-  /// 
+  ///
   /// Similar to Sequelize's Model.update() with WHERE clause
   /// Accepts a Map<String, dynamic> of values and uses WHERE clause if present
   /// Returns the number of affected rows
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final rows = await db.query<User>()
@@ -507,18 +509,19 @@ class QueryBuilder<T extends BaseModel> {
     } else {
       // Warn if no WHERE clause - updating all records
       // In production, you might want to throw an error instead
-      print('Warning: updateValues() called without WHERE clause - will update all records');
+      print(
+          'Warning: updateValues() called without WHERE clause - will update all records');
     }
 
     return await _db.rawUpdate(query, args);
   }
 
   /// Update a model instance (Sequelize-style)
-  /// 
+  ///
   /// Similar to Sequelize's instance.save() or instance.update()
   /// Automatically uses the model's primary key for the WHERE clause
   /// Returns the number of affected rows (typically 1)
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final user = await db.query<User>().findByPk(1);
@@ -532,14 +535,16 @@ class QueryBuilder<T extends BaseModel> {
 
     final primaryKey = _modelInfo!.primaryKey;
     if (primaryKey == null) {
-      throw StateError('Model ${_modelType} does not have a primary key defined');
+      throw StateError(
+          'Model ${_modelType} does not have a primary key defined');
     }
 
     final values = model.toMap();
     final primaryKeyValue = values[primaryKey];
-    
+
     if (primaryKeyValue == null) {
-      throw ArgumentError('Cannot update model without primary key value. Use insert() for new records.');
+      throw ArgumentError(
+          'Cannot update model without primary key value. Use insert() for new records.');
     }
 
     // Remove primary key from update values
@@ -562,7 +567,9 @@ class QueryBuilder<T extends BaseModel> {
     final tableName = _modelInfo!.tableName;
     final columns = updateValues.keys.toList();
     final setClause = columns.map((col) => '$col = ?').join(', ');
-    final args = <dynamic>[]..addAll(updateValues.values)..add(primaryKeyValue);
+    final args = <dynamic>[]
+      ..addAll(updateValues.values)
+      ..add(primaryKeyValue);
 
     final query = 'UPDATE $tableName SET $setClause WHERE $primaryKey = ?';
 
@@ -592,4 +599,3 @@ class QueryBuilder<T extends BaseModel> {
     return null;
   }
 }
-

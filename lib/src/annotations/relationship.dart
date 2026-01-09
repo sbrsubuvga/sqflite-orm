@@ -47,4 +47,3 @@ class ManyToMany {
     required this.targetForeignKey,
   });
 }
-

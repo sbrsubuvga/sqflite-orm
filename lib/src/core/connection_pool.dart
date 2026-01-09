@@ -10,7 +10,8 @@ class ConnectionPool {
   String? _path;
 
   /// Get or create database connection
-  Future<Database> getDatabase(String path, Future<Database> Function() createFn) async {
+  Future<Database> getDatabase(
+      String path, Future<Database> Function() createFn) async {
     if (_database != null && _path == path && await _database!.isOpen) {
       return _database!;
     }
@@ -34,4 +35,3 @@ class ConnectionPool {
     return _database != null && await _database!.isOpen;
   }
 }
-

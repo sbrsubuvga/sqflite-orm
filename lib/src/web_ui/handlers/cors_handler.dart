@@ -24,4 +24,3 @@ Middleware get corsHandler {
     };
   };
 }
-

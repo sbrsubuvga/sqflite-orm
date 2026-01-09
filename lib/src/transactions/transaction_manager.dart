@@ -1,4 +1,5 @@
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' show Database, Transaction, Batch;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart'
+    show Database, Transaction, Batch;
 
 /// Manages database transactions
 class TransactionManager {
@@ -20,4 +21,3 @@ class TransactionManager {
     await batch.commit(noResult: false);
   }
 }
-

@@ -15,9 +15,11 @@ class TablesRoute {
         "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name",
       );
 
-      final tableList = tables.map((row) => {
-        'name': row['name'] as String,
-      }).toList();
+      final tableList = tables
+          .map((row) => {
+                'name': row['name'] as String,
+              })
+          .toList();
 
       return Response.ok(
         jsonEncode({'tables': tableList}),
@@ -45,13 +47,15 @@ class TablesRoute {
       );
       final count = countResult.first['count'] as int;
 
-      final columns = tableInfo.map((row) => {
-        'name': row['name'],
-        'type': row['type'],
-        'notnull': row['notnull'] == 1,
-        'dflt_value': row['dflt_value'],
-        'pk': row['pk'] == 1,
-      }).toList();
+      final columns = tableInfo
+          .map((row) => {
+                'name': row['name'],
+                'type': row['type'],
+                'notnull': row['notnull'] == 1,
+                'dflt_value': row['dflt_value'],
+                'pk': row['pk'] == 1,
+              })
+          .toList();
 
       return Response.ok(
         jsonEncode({
@@ -69,4 +73,3 @@ class TablesRoute {
     }
   }
 }
-

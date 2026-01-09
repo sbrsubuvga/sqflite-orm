@@ -37,4 +37,3 @@ class AuthHandler {
     return providedPassword == password;
   }
 }
-

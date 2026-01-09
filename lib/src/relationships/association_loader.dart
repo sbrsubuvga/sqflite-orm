@@ -16,19 +16,23 @@ class AssociationLoader {
     for (final relationName in relationNames) {
       final relationship = modelInfo.relationships[relationName];
       if (relationship == null) {
-        print('Warning: Relationship $relationName not found for ${modelInfo.tableName}');
+        print(
+            'Warning: Relationship $relationName not found for ${modelInfo.tableName}');
         continue;
       }
 
       switch (relationship.type) {
         case 'ManyToOne':
-          await _loadManyToOne(db, models, relationship, modelInfo, relationName);
+          await _loadManyToOne(
+              db, models, relationship, modelInfo, relationName);
           break;
         case 'OneToMany':
-          await _loadOneToMany(db, models, relationship, modelInfo, relationName);
+          await _loadOneToMany(
+              db, models, relationship, modelInfo, relationName);
           break;
         case 'ManyToMany':
-          await _loadManyToMany(db, models, relationship, modelInfo, relationName);
+          await _loadManyToMany(
+              db, models, relationship, modelInfo, relationName);
           break;
       }
     }
@@ -43,12 +47,12 @@ class AssociationLoader {
   ) async {
     if (relationship.foreignKey == null) return;
 
-      // Get unique foreign key values
-      final fkValues = models
-          .map((m) => m.toMap()[relationship.foreignKey] as dynamic)
-          .where((v) => v != null)
-          .toSet()
-          .toList();
+    // Get unique foreign key values
+    final fkValues = models
+        .map((m) => m.toMap()[relationship.foreignKey] as dynamic)
+        .where((v) => v != null)
+        .toSet()
+        .toList();
 
     if (fkValues.isEmpty) return;
 
@@ -73,7 +77,8 @@ class AssociationLoader {
             final instance = targetInfo.factory!(row);
             relatedMap[key] = instance;
           } catch (e) {
-            print('Warning: Failed to create ${targetInfo.modelType} instance: $e');
+            print(
+                'Warning: Failed to create ${targetInfo.modelType} instance: $e');
           }
         }
       }
@@ -131,7 +136,8 @@ class AssociationLoader {
             final instance = targetInfo.factory!(row);
             relatedMap[fkValue]!.add(instance);
           } catch (e) {
-            print('Warning: Failed to create ${targetInfo.modelType} instance: $e');
+            print(
+                'Warning: Failed to create ${targetInfo.modelType} instance: $e');
           }
         }
       }
@@ -202,7 +208,8 @@ class AssociationLoader {
             final instance = targetInfo.factory!(cleanRow);
             relatedMap[parentId]!.add(instance);
           } catch (e) {
-            print('Warning: Failed to create ${targetInfo.modelType} instance: $e');
+            print(
+                'Warning: Failed to create ${targetInfo.modelType} instance: $e');
           }
         }
       }
@@ -220,4 +227,3 @@ class AssociationLoader {
     }
   }
 }
-

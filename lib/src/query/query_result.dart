@@ -24,4 +24,3 @@ class QueryResult<T> {
     return (totalCount! / pageSize).ceil();
   }
 }
-

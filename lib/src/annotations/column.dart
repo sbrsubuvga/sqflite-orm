@@ -19,4 +19,3 @@ class Column {
     this.ignore = false,
   });
 }
-

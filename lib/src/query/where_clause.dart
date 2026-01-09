@@ -106,4 +106,3 @@ class WhereClause {
   /// Get the arguments for the WHERE clause
   List<dynamic> get args => arguments;
 }
-

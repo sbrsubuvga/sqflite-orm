@@ -5,4 +5,3 @@ class PrimaryKey {
 
   const PrimaryKey({this.autoIncrement = true});
 }
-

@@ -17,14 +17,15 @@ class DatabaseManager {
   final String path;
   final int version;
   final List<Type> models;
-  final Database? Function(Database db, int oldVersion, int newVersion)? onUpgrade;
+  final Database? Function(Database db, int oldVersion, int newVersion)?
+      onUpgrade;
   final Database? Function(Database db, int version)? onCreate;
 
   Database? _database;
   final ConnectionPool _connectionPool = ConnectionPool();
   final MigrationManager _migrationManager = MigrationManager();
   final SchemaValidator _schemaValidator = SchemaValidator();
-  
+
   static bool _ffiInitialized = false;
 
   DatabaseManager({
@@ -39,7 +40,7 @@ class DatabaseManager {
   /// This is safe to call multiple times - it only initializes once
   static void _ensureFfiInitialized() {
     if (_ffiInitialized) return;
-    
+
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       ffi.sqfliteFfiInit();
       ffi.databaseFactory = ffi.databaseFactoryFfiNoIsolate;
@@ -48,11 +49,11 @@ class DatabaseManager {
   }
 
   /// Initialize the database manager
-  /// 
+  ///
   /// Automatically registers models if they're not already registered.
   /// Models are auto-registered by creating an instance and inferring
   /// column information from toMap().
-  /// 
+  ///
   /// You can optionally provide instance creators for models:
   /// ```dart
   /// final db = await DatabaseManager.initialize(
@@ -62,7 +63,7 @@ class DatabaseManager {
   ///   instanceCreators: {User: () => User()},
   /// );
   /// ```
-  /// 
+  ///
   /// Enable web debug mode to automatically start Web UI:
   /// ```dart
   /// final db = await DatabaseManager.initialize(
@@ -91,10 +92,10 @@ class DatabaseManager {
         _instanceCreators[entry.key] = entry.value;
       }
     }
-    
+
     // Auto-register models that aren't already registered
     await _autoRegisterModels(models);
-    
+
     final manager = DatabaseManager(
       path: path,
       version: version,
@@ -104,7 +105,7 @@ class DatabaseManager {
     );
 
     await manager._initializeDatabase();
-    
+
     // Start Web UI if web debug mode is enabled
     if (webDebug) {
       try {
@@ -118,40 +119,42 @@ class DatabaseManager {
         // Don't fail initialization if Web UI fails to start
       }
     }
-    
+
     return manager;
   }
-  
+
   /// Auto-register models by creating instances and inferring information
   static Future<void> _autoRegisterModels(List<Type> models) async {
     final registry = ModelRegistry();
-    
+
     for (final modelType in models) {
       // Skip if already registered
       if (registry.getInfo(modelType) != null) {
         continue;
       }
-      
+
       try {
         // Try to create an instance using a workaround
         // Since we can't use reflection, we'll use a pattern where
         // models must have a default constructor
         final instance = _createModelInstance(modelType);
         if (instance == null) {
-          print('Warning: Could not auto-register $modelType - ensure it has a default constructor');
+          print(
+              'Warning: Could not auto-register $modelType - ensure it has a default constructor');
           continue;
         }
-        
+
         // Extract information from the model
         final tableName = instance.tableName;
         final map = instance.toMap();
-        
+
         // Try to detect primary key (common patterns: 'id', first key, etc.)
         String? primaryKey = _detectPrimaryKey(map, modelType);
-        
+
         // Infer columns from toMap()
-        final columns = SimpleModelRegistrar.inferColumnsFromModel(instance, primaryKey);
-        
+        final columns =
+            SimpleModelRegistrar.inferColumnsFromModel(instance, primaryKey);
+
         // Create factory from fromMap
         final factory = (Map<String, dynamic> map) {
           final newInstance = _createModelInstance(modelType);
@@ -160,7 +163,7 @@ class DatabaseManager {
           }
           return newInstance.fromMap(map);
         };
-        
+
         // Register the model
         final modelInfo = ModelInfo(
           tableName: tableName,
@@ -169,14 +172,14 @@ class DatabaseManager {
           primaryKey: primaryKey,
           factory: factory,
         );
-        
+
         registry.register(modelType, modelInfo);
       } catch (e) {
         print('Warning: Failed to auto-register $modelType: $e');
       }
     }
   }
-  
+
   /// Create a model instance using a registry of instance creators
   static BaseModel? _createModelInstance(Type modelType) {
     // Try to get instance creator from global registry
@@ -184,31 +187,32 @@ class DatabaseManager {
     if (creator != null) {
       return creator();
     }
-    
+
     // If no creator registered, we can't auto-register
     // User should either:
     // 1. Register models manually before initialize()
     // 2. Use code generation to provide instance creators
     return null;
   }
-  
+
   /// Global registry for model instance creators
   /// Used for auto-registration
   static final Map<Type, BaseModel Function()> _instanceCreators = {};
-  
+
   /// Register an instance creator for auto-registration
   /// This allows models to be auto-registered during DatabaseManager.initialize()
-  static void registerInstanceCreator<T extends BaseModel>(T Function() creator) {
+  static void registerInstanceCreator<T extends BaseModel>(
+      T Function() creator) {
     _instanceCreators[T] = creator;
   }
-  
+
   /// Detect primary key from common patterns
   static String? _detectPrimaryKey(Map<String, dynamic> map, Type modelType) {
     // Common primary key names
     if (map.containsKey('id')) return 'id';
     if (map.containsKey('ID')) return 'ID';
     if (map.containsKey('Id')) return 'Id';
-    
+
     // Check for fields that are null (likely auto-increment primary keys)
     for (final entry in map.entries) {
       if (entry.value == null) {
@@ -218,19 +222,19 @@ class DatabaseManager {
         }
       }
     }
-    
+
     // Return first key if only one key exists
     if (map.length == 1) {
       return map.keys.first;
     }
-    
+
     return null;
   }
 
   Future<void> _initializeDatabase() async {
     // Initialize FFI for desktop platforms (if needed)
     _ensureFfiInitialized();
-    
+
     // Get database path
     final dbPath = await _getDatabasePath(path);
 
@@ -290,10 +294,10 @@ class DatabaseManager {
   }
 
   /// Create a query builder for a model type using a transaction
-  /// 
+  ///
   /// Use this inside transaction callbacks to ensure all operations
   /// use the transaction object (sqflite best practice).
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// await db.transaction((txn) async {
@@ -305,10 +309,10 @@ class DatabaseManager {
   }
 
   /// Execute a transaction
-  /// 
+  ///
   /// All database operations inside the transaction must use the
   /// transaction object (txn), not the main database object.
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// await db.transaction((txn) async {
@@ -337,7 +341,7 @@ class DatabaseManager {
     } catch (e) {
       // Fallback for pure Dart: use current directory
       // If path is absolute, use it directly
-      if (relativePath.startsWith('/') || 
+      if (relativePath.startsWith('/') ||
           (Platform.isWindows && relativePath.contains(':'))) {
         return relativePath;
       }
@@ -378,4 +382,3 @@ class DatabaseManager {
     return null;
   }
 }
-

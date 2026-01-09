@@ -15,10 +15,10 @@ abstract class BaseModel {
   String get tableName;
 
   /// Get a loaded relationship by name
-  /// 
+  ///
   /// Returns the relationship data if it was loaded via withRelations()
   /// Returns null if the relationship hasn't been loaded
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final post = await db.query<Post>()
@@ -39,10 +39,10 @@ abstract class BaseModel {
   }
 
   /// Get a loaded relationship list by name (for OneToMany/ManyToMany)
-  /// 
+  ///
   /// Returns the relationship list if it was loaded via withRelations()
   /// Returns empty list if the relationship hasn't been loaded
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// final user = await db.query<User>()
@@ -62,4 +62,3 @@ abstract class BaseModel {
     return [];
   }
 }
-

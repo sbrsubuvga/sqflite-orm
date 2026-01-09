@@ -13,7 +13,7 @@ class QueryRoute {
     try {
       // Basic SQL validation - only allow SELECT for security
       final sqlUpper = sql.trim().toUpperCase();
-      
+
       if (sqlUpper.startsWith('SELECT')) {
         final results = await _db.rawQuery(sql, args ?? []);
         return Response.ok(
@@ -69,4 +69,3 @@ class QueryRoute {
     }
   }
 }
-
