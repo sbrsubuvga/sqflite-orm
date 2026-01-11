@@ -341,7 +341,7 @@ class QueryBuilder<T extends BaseModel> {
   /// Create a new record (Sequelize-style)
   ///
   /// Similar to Sequelize's Model.create()
-  /// Accepts a Map<String, dynamic> and returns the created model instance
+  /// Accepts a `Map<String, dynamic>` and returns the created model instance
   ///
   /// Example:
   /// ```dart
@@ -468,7 +468,7 @@ class QueryBuilder<T extends BaseModel> {
   /// Update records (Sequelize-style)
   ///
   /// Similar to Sequelize's Model.update() with WHERE clause
-  /// Accepts a Map<String, dynamic> of values and uses WHERE clause if present
+  /// Accepts a `Map<String, dynamic>` of values and uses WHERE clause if present
   /// Returns the number of affected rows
   ///
   /// Example:

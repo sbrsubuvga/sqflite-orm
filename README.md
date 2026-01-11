@@ -22,7 +22,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.1
+  sqflite_orm: ^0.1.2
 ```
 
 ## Quick Start
@@ -286,7 +286,7 @@ When debugging your Flutter app on an Android device, the Web UI server automati
 
 The web UI provides a modern interface for database management:
 
-![Web UI Screenshot](web-ui-screenshot.png)
+![Web UI Screenshot](Screenshot%202026-01-11%20at%209.29.35%20AM.png)
 
 - **Table Browser**: Left sidebar listing all database tables
 - **Data Grid**: Browse and view table data with pagination
@@ -437,6 +437,19 @@ Run the example:
 ```bash
 dart run example/example.dart
 ```
+
+## Real-World Examples
+
+### Finzo - Income & Expense Management App
+
+[**Finzo**](https://github.com/sbrsubuvga/finzo) is a real-world Flutter application that demonstrates the use of `sqflite_orm` in production. It's an income and expense management app that showcases:
+
+- Complex model relationships
+- Transaction handling for financial operations
+- Data persistence and management
+- Cross-platform compatibility (Android, iOS, Desktop, Web)
+
+Check out the [Finzo repository](https://github.com/sbrsubuvga/finzo) to see how `sqflite_orm` is used in a complete application.
 
 ## API Reference
 

@@ -1,3 +1,7 @@
+## 0.1.2
+
+* Added Finzo example app reference in README
+
 ## 0.1.1
 
 * Network access support for Web UI when debugging on Android devices
