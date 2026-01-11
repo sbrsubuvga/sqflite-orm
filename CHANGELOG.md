@@ -1,3 +1,9 @@
+## 0.1.1
+
+* Network access support for Web UI when debugging on Android devices
+* Improved Web UI with better pagination and styling
+
+
 ## 0.1.0
 
 * Initial release
