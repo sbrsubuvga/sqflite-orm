@@ -412,10 +412,7 @@ void main() async {
   await db.query<User>().select(['id', 'name', 'email']).findAll();
 
   // Count with WHERE
-  await db
-      .query<User>()
-      .whereClause(WhereClause().isNotNull('phone'))
-      .count();
+  await db.query<User>().whereClause(WhereClause().isNotNull('phone')).count();
 
   // Pagination
   await db.query<User>().orderBy('id').limit(2).offset(0).findAll();

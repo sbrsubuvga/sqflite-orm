@@ -327,7 +327,7 @@ class DatabaseManager {
   /// Close the database
   Future<void> close() async {
     await _connectionPool.close();
-    if (_database != null && await _database!.isOpen) {
+    if (_database != null && _database!.isOpen) {
       await _database!.close();
       _database = null;
     }

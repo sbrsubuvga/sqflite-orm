@@ -208,7 +208,7 @@ class WebUI {
 
     // Get device IP address for network access
     final deviceIp = await _getDeviceIpAddress();
-    
+
     print('✓ Web UI server started');
     print('  Local:   http://localhost:$actualPort');
     if (deviceIp != null) {
@@ -240,8 +240,7 @@ class WebUI {
       for (final interface in interfaces) {
         for (final addr in interface.addresses) {
           // Return the first non-loopback IPv4 address
-          if (addr.type == InternetAddressType.IPv4 &&
-              !addr.isLoopback) {
+          if (addr.type == InternetAddressType.IPv4 && !addr.isLoopback) {
             return addr.address;
           }
         }
