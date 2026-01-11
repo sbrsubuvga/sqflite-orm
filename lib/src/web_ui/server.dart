@@ -176,9 +176,10 @@ class WebUI {
 
     while (attempts < maxAttempts) {
       try {
+        // Bind to all interfaces (0.0.0.0) to allow access from network
         _server = await shelf_io.serve(
           handler,
-          InternetAddress.loopbackIPv4,
+          InternetAddress.anyIPv4,
           actualPort,
         );
         break; // Success
@@ -205,7 +206,15 @@ class WebUI {
       throw Exception('Failed to start server after $maxAttempts attempts');
     }
 
-    print('✓ Web UI server started at http://localhost:$actualPort');
+    // Get device IP address for network access
+    final deviceIp = await _getDeviceIpAddress();
+    
+    print('✓ Web UI server started');
+    print('  Local:   http://localhost:$actualPort');
+    if (deviceIp != null) {
+      print('  Network: http://$deviceIp:$actualPort');
+      print('  (Access from your PC using the Network URL above)');
+    }
     if (actualPort != port) {
       print(
           '  (Requested port $port was in use, using port $actualPort instead)');
@@ -222,6 +231,26 @@ class WebUI {
       _server = null;
       print('Web UI server stopped');
     }
+  }
+
+  /// Get the device's local IP address for network access
+  static Future<String?> _getDeviceIpAddress() async {
+    try {
+      final interfaces = await NetworkInterface.list();
+      for (final interface in interfaces) {
+        for (final addr in interface.addresses) {
+          // Return the first non-loopback IPv4 address
+          if (addr.type == InternetAddressType.IPv4 &&
+              !addr.isLoopback) {
+            return addr.address;
+          }
+        }
+      }
+    } catch (e) {
+      // If we can't get network interfaces, return null
+      // This can happen in some environments
+    }
+    return null;
   }
 
   /// Get the web UI HTML

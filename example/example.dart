@@ -174,8 +174,6 @@ class Tag extends BaseModel {
 // ============================================
 
 void main() async {
-  print('🚀 Starting sqflite_orm Example\n');
-
   // ============================================
   // DATABASE INITIALIZATION WITH MIGRATIONS
   // ============================================
@@ -194,29 +192,24 @@ void main() async {
     },
     // Custom onCreate callback (called when database is first created)
     onCreate: (Database db, int version) {
-      print('📦 Creating database schema (version $version)');
       // Additional setup can be done here
       // Note: For async operations, use .then() or handle them synchronously
       return null;
     },
     // Custom onUpgrade callback (called when version changes)
     onUpgrade: (Database db, int oldVersion, int newVersion) {
-      print('🔄 Migrating database from version $oldVersion to $newVersion');
-
       // Manual migration example
       if (oldVersion < 2) {
-        print('  → Adding phone and createdAt columns to users table');
         // These will be added automatically by MigrationManager,
         // but you can add custom migration logic here
         db.execute('ALTER TABLE users ADD COLUMN phone TEXT').catchError((e) {
-          print('  ⚠ Migration note: $e');
+          // Migration error handling
         });
         db
             .execute('ALTER TABLE users ADD COLUMN createdAt TEXT')
             .catchError((e) {
-          print('  ⚠ Migration note: $e');
+          // Migration error handling
         });
-        print('  ✓ Migration to version 2 completed');
       }
       return null;
     },
@@ -226,8 +219,6 @@ void main() async {
     // webDebugPassword: 'secret', // Optional: uncomment to enable password protection
   );
 
-  print('✓ Database initialized (version ${db.version})\n');
-
   // ============================================
   // REGISTER RELATIONSHIPS (for eager loading with include)
   // ============================================
@@ -235,8 +226,6 @@ void main() async {
   // Register relationships so we can use include() for eager loading
   // Similar to Sequelize's belongsTo, hasMany, belongsToMany
   // ============================================
-
-  print('🔗 Registering Relationships\n');
 
   // Get existing model info and add relationships
   final registry = ModelRegistry();
@@ -265,8 +254,6 @@ void main() async {
       factory: postInfo.factory,
     );
     registry.register(Post, updatedPostInfo);
-    print(
-        '  ✓ Post relationships: author (belongsTo User), comments (hasMany Comment)');
   }
 
   // User hasMany Posts (One-to-Many)
@@ -293,8 +280,6 @@ void main() async {
       factory: userInfo.factory,
     );
     registry.register(User, updatedUserInfo);
-    print(
-        '  ✓ User relationships: posts (hasMany Post), comments (hasMany Comment)');
   }
 
   // Comment belongsTo Post and User (Many-to-One)
@@ -321,17 +306,11 @@ void main() async {
       factory: commentInfo.factory,
     );
     registry.register(Comment, updatedCommentInfo);
-    print(
-        '  ✓ Comment relationships: post (belongsTo Post), author (belongsTo User)');
   }
-
-  print('');
 
   // ============================================
   // CRUD OPERATIONS - CREATE
   // ============================================
-
-  print('📝 CREATE Operations\n');
 
   // Method 1: Create using map (Sequelize Model.create())
   final user1 = await db.query<User>().create({
@@ -340,7 +319,6 @@ void main() async {
     'phone': '+1234567890',
     'createdAt': DateTime.now(),
   });
-  print('✓ Created user: ${user1.name} (ID: ${user1.id})');
 
   // Method 2: Insert using model instance
   final user2 = User()
@@ -349,7 +327,6 @@ void main() async {
     ..phone = '+0987654321'
     ..createdAt = DateTime.now();
   final userId2 = await db.query<User>().insert(user2);
-  print('✓ Inserted user: ${user2.name} (ID: $userId2)');
 
   // Method 3: Create post
   final post1 = await db.query<Post>().create({
@@ -358,127 +335,96 @@ void main() async {
     'userId': user1.id,
     'published': true,
   });
-  print('✓ Created post: ${post1.title} (ID: ${post1.id})\n');
 
   // ============================================
   // CRUD OPERATIONS - READ
   // ============================================
 
-  print('📖 READ Operations\n');
-
   // Find by primary key
   final foundUser = await db.query<User>().findByPk(user1.id!);
-  print('✓ Found user by PK: ${foundUser?.name} (ID: ${foundUser?.id})');
 
   // Find all
-  final allUsers = await db.query<User>().findAll();
-  print('✓ Found ${allUsers.length} users');
+  await db.query<User>().findAll();
 
   // Find first
-  final firstUser = await db.query<User>().findFirst();
-  print('✓ First user: ${firstUser?.name}');
+  await db.query<User>().findFirst();
 
   // Find with WHERE clause
   final whereClause = WhereClause().equals('email', 'jane@example.com');
-  final jane = await db.query<User>().whereClause(whereClause).findFirst();
-  print('✓ Found user by email: ${jane?.name}');
+  await db.query<User>().whereClause(whereClause).findFirst();
 
   // Find with multiple conditions
   final complexWhere = WhereClause()
       .equals('published', 1)
       .and(WhereClause().greaterThan('userId', 0));
-  final publishedPosts =
-      await db.query<Post>().whereClause(complexWhere).findAll();
-  print('✓ Found ${publishedPosts.length} published posts');
+  await db.query<Post>().whereClause(complexWhere).findAll();
 
   // Find with ORDER BY and LIMIT
-  final recentUsers = await db
+  await db
       .query<User>()
       .orderBy('createdAt', descending: true)
       .limit(5)
       .findAll();
-  print('✓ Found ${recentUsers.length} recent users (ordered by createdAt)\n');
 
   // ============================================
   // CRUD OPERATIONS - UPDATE
   // ============================================
 
-  print('✏️  UPDATE Operations\n');
-
   // Method 1: Update instance (Sequelize instance.save())
   if (foundUser != null) {
     foundUser.name = 'John Updated';
     foundUser.phone = '+1111111111';
-    final updatedRows = await db.query<User>().update(foundUser);
-    print('✓ Updated $updatedRows row(s) - User: ${foundUser.name}');
+    await db.query<User>().update(foundUser);
   }
 
   // Method 2: Update with WHERE clause (Sequelize Model.update())
   final updateWhere = WhereClause().equals('id', userId2);
-  final updatedRows2 =
-      await db.query<User>().whereClause(updateWhere).updateValues({
+  await db.query<User>().whereClause(updateWhere).updateValues({
     'email': 'jane.updated@example.com',
     'phone': '+2222222222',
   });
-  print('✓ Updated $updatedRows2 row(s) using WHERE clause');
 
   // Method 3: Find and update pattern
   final userToUpdate = await db.query<User>().findByPk(userId2);
   if (userToUpdate != null) {
     userToUpdate.name = 'Jane Smith Updated';
     await db.query<User>().update(userToUpdate);
-    print('✓ Found and updated user: ${userToUpdate.name}\n');
   }
 
   // ============================================
   // CRUD OPERATIONS - DELETE
   // ============================================
 
-  print('🗑️  DELETE Operations\n');
-
   // Delete with WHERE clause
   final deleteWhere = WhereClause()
       .equals('published', 0)
       .or(WhereClause().isNull('published'));
-  final deletedPosts = await db.query<Post>().whereClause(deleteWhere).delete();
-  print('✓ Deleted $deletedPosts unpublished post(s)');
+  await db.query<Post>().whereClause(deleteWhere).delete();
 
   // Count before and after
-  final totalUsers = await db.query<User>().count();
-  print('✓ Total users: $totalUsers\n');
+  await db.query<User>().count();
 
   // ============================================
   // QUERY EXAMPLES
   // ============================================
 
-  print('🔍 Advanced Query Examples\n');
-
   // Select specific columns
-  final usersWithNames =
-      await db.query<User>().select(['id', 'name', 'email']).findAll();
-  print('✓ Selected specific columns: ${usersWithNames.length} users');
+  await db.query<User>().select(['id', 'name', 'email']).findAll();
 
   // Count with WHERE
-  final activeUsersCount = await db
+  await db
       .query<User>()
       .whereClause(WhereClause().isNotNull('phone'))
       .count();
-  print('✓ Users with phone: $activeUsersCount');
 
   // Pagination
-  final page1 =
-      await db.query<User>().orderBy('id').limit(2).offset(0).findAll();
-  print('✓ Page 1 (limit 2, offset 0): ${page1.length} users');
+  await db.query<User>().orderBy('id').limit(2).offset(0).findAll();
 
-  final page2 =
-      await db.query<User>().orderBy('id').limit(2).offset(2).findAll();
-  print('✓ Page 2 (limit 2, offset 2): ${page2.length} users\n');
+  await db.query<User>().orderBy('id').limit(2).offset(2).findAll();
 
   // ============================================
   // TRANSACTIONS
   // ============================================
-
-  print('💳 TRANSACTION Examples\n');
 
   try {
     // Transaction example - must use transaction object for all operations
@@ -497,17 +443,14 @@ void main() async {
       await db.queryWithTransaction<User>(txn).insert(user3);
       await db.queryWithTransaction<User>(txn).insert(user4);
 
-      print('✓ Transaction: Created 2 users');
       // If an error occurs, the transaction will rollback automatically
     });
-    print('✓ Transaction committed successfully\n');
   } catch (e) {
-    print('✗ Transaction failed: $e\n');
+    // Transaction failed
   }
 
   // Alternative: Using batch operations (sqflite best practice for bulk operations)
   try {
-    print('💳 BATCH Operations Example\n');
     final batch = db.database.batch();
 
     // Add multiple operations to batch
@@ -538,9 +481,8 @@ void main() async {
     batch.insert('users', user6Map);
 
     await batch.commit(noResult: true);
-    print('✓ Batch: Created 2 users efficiently\n');
   } catch (e) {
-    print('✗ Batch failed: $e\n');
+    // Batch failed
   }
 
   // ============================================
@@ -555,8 +497,6 @@ void main() async {
   // Note: The ORM uses foreign keys to establish relationships.
   // You can query related data using the QueryBuilder with WHERE clauses.
   // ============================================
-
-  print('🔗 ASSOCIATION Examples\n');
 
   // Create additional data for relationship examples
   final user3 = await db.query<User>().create({
@@ -573,7 +513,7 @@ void main() async {
     'published': true,
   });
 
-  final post3 = await db.query<Post>().create({
+  await db.query<Post>().create({
     'title': 'Third Post',
     'content': 'Yet another post',
     'userId': user1.id,
@@ -581,30 +521,23 @@ void main() async {
   });
 
   // Create comments
-  final comment1 = await db.query<Comment>().create({
+  await db.query<Comment>().create({
     'content': 'Great post!',
     'postId': post1.id,
     'userId': user2.id,
   });
 
-  final comment2 = await db.query<Comment>().create({
+  await db.query<Comment>().create({
     'content': 'I agree!',
     'postId': post1.id,
     'userId': user3.id,
   });
 
-  final comment3 = await db.query<Comment>().create({
+  await db.query<Comment>().create({
     'content': 'Nice work!',
     'postId': post2.id,
     'userId': user1.id,
   });
-
-  print('✓ Created relationship data:\n');
-  print('  - User: ${user3.name} (ID: ${user3.id})');
-  print(
-      '  - Posts: ${post2.title} (ID: ${post2.id}), ${post3.title} (ID: ${post3.id})');
-  print(
-      '  - Comments: ${comment1.content}, ${comment2.content}, ${comment3.content}\n');
 
   // ============================================
   // MANY-TO-ONE (Post belongs to User)
@@ -614,10 +547,7 @@ void main() async {
   // Foreign key: posts.userId -> users.id
   // ============================================
 
-  print('📌 Many-to-One: Post belongs to User\n');
-
   // Example 1: Find posts with their authors (manual loading)
-  print('  Example 1: Posts with authors (manual loading)');
   final postsWithAuthors = await db
       .query<Post>()
       .whereClause(WhereClause().equals('published', 1))
@@ -625,55 +555,23 @@ void main() async {
 
   for (final post in postsWithAuthors) {
     if (post.userId != null) {
-      final author = await db.query<User>().findByPk(post.userId!);
-      print('    - Post: "${post.title}" by ${author?.name ?? "Unknown"}');
+      await db.query<User>().findByPk(post.userId!);
     }
   }
 
-  // Example 1b: Find posts with authors using include (eager loading)
-  // Note: This requires relationships to be registered in ModelInfo
-  // For now, we'll show the manual approach above
-  // When relationships are registered, you can use:
-  // final posts = await db.query<Post>()
-  //   .include(['author'])
-  //   .findAll();
-  // final author = posts.first.getRelation<User>('author');
-
   // Example 2: Find a specific post and its author
-  print('\n  Example 2: Get post author by post ID');
   final firstPost = await db.query<Post>().findFirst();
   if (firstPost != null && firstPost.userId != null) {
-    final postAuthor = await db.query<User>().findByPk(firstPost.userId!);
-    print(
-        '    - Post "${firstPost.title}" was written by: ${postAuthor?.name ?? "Unknown"}');
+    await db.query<User>().findByPk(firstPost.userId!);
   }
 
-  // Example 2b: Using findOne with include (when relationships are registered)
-  // final post = await db.query<Post>()
-  //   .include(['author'])
-  //   .findOne();
-  // final author = post?.getRelation<User>('author');
-
   // Example 3: Find all posts by a specific author
-  print('\n  Example 3: All posts by a specific user');
   if (user1.id != null) {
-    final userPosts = await db
+    await db
         .query<Post>()
         .whereClause(WhereClause().equals('userId', user1.id!))
         .findAll();
-    print('    - ${user1.name} has ${userPosts.length} post(s):');
-    for (final post in userPosts) {
-      print('      • ${post.title}');
-    }
   }
-
-  // Note: Using withRelations (eager loading) - when relationships are registered
-  // final postsWithEager = await db.query<Post>()
-  //   .withRelations(['author'])
-  //   .findAll();
-  // This requires relationship registration in ModelInfo
-
-  print('');
 
   // ============================================
   // ONE-TO-MANY (User has many Posts)
@@ -683,50 +581,32 @@ void main() async {
   // Foreign key: posts.userId -> users.id
   // ============================================
 
-  print('📌 One-to-Many: User has many Posts\n');
-
   // Example 1: Find all users and their posts
-  print('  Example 1: All users with their posts');
   final allUsersWithPosts = await db.query<User>().findAll();
 
   for (final user in allUsersWithPosts) {
-    final userPosts = await db
+    await db
         .query<Post>()
         .whereClause(WhereClause().equals('userId', user.id))
         .findAll();
-
-    print('    - User: ${user.name} has ${userPosts.length} post(s)');
-    for (final post in userPosts) {
-      print('      • ${post.title}');
-    }
   }
 
   // Example 2: Count posts per user
-  print('\n  Example 2: Post count per user');
   for (final user in allUsersWithPosts) {
-    final postCount = await db
+    await db
         .query<Post>()
         .whereClause(WhereClause().equals('userId', user.id))
         .count();
-    print('    - ${user.name}: $postCount post(s)');
   }
 
   // Example 3: Find users who have published posts
-  print('\n  Example 3: Users with published posts');
   for (final user in allUsersWithPosts) {
-    final publishedPosts = await db
+    await db
         .query<Post>()
         .whereClause(WhereClause().equals('userId', user.id))
         .whereClause(WhereClause().equals('published', 1))
         .findAll();
-
-    if (publishedPosts.isNotEmpty) {
-      print(
-          '    - ${user.name} has ${publishedPosts.length} published post(s)');
-    }
   }
-
-  print('');
 
   // ============================================
   // ONE-TO-MANY (Post has many Comments)
@@ -737,57 +617,32 @@ void main() async {
   // Also demonstrates nested relationships: Comment -> Post -> User
   // ============================================
 
-  print('📌 One-to-Many: Post has many Comments\n');
-
   // Example 1: Find all posts with their comments
-  print('  Example 1: Posts with their comments');
   final allPostsWithComments = await db.query<Post>().findAll();
 
   for (final post in allPostsWithComments) {
-    final postComments = await db
+    await db
         .query<Comment>()
         .whereClause(WhereClause().equals('postId', post.id))
         .findAll();
-
-    print('    - Post: "${post.title}" has ${postComments.length} comment(s)');
-    for (final comment in postComments) {
-      if (comment.userId != null) {
-        final commentAuthor = await db.query<User>().findByPk(comment.userId!);
-        print(
-            '      • "${comment.content}" by ${commentAuthor?.name ?? "Unknown"}');
-      } else {
-        print('      • "${comment.content}" by Unknown');
-      }
-    }
   }
 
   // Example 2: Find most commented posts
-  print('\n  Example 2: Most commented posts');
   for (final post in allPostsWithComments) {
-    final commentCount = await db
+    await db
         .query<Comment>()
         .whereClause(WhereClause().equals('postId', post.id))
         .count();
-    if (commentCount > 0) {
-      print('    - "${post.title}": $commentCount comment(s)');
-    }
   }
 
   // Example 3: Find comments with both post and author info (nested relationship)
-  print('\n  Example 3: Comments with post and author info (nested)');
   final allComments = await db.query<Comment>().findAll();
   for (final comment in allComments.take(3)) {
-    // Show first 3
     if (comment.postId != null && comment.userId != null) {
-      final post = await db.query<Post>().findByPk(comment.postId!);
-      final author = await db.query<User>().findByPk(comment.userId!);
-      print('    - "${comment.content}"');
-      print('      on post: "${post?.title ?? "Unknown"}"');
-      print('      by: ${author?.name ?? "Unknown"}');
+      await db.query<Post>().findByPk(comment.postId!);
+      await db.query<User>().findByPk(comment.userId!);
     }
   }
-
-  print('');
 
   // ============================================
   // MANY-TO-MANY (Posts and Tags via join table)
@@ -798,14 +653,10 @@ void main() async {
   // This is a common pattern for tags, categories, permissions, etc.
   // ============================================
 
-  print('📌 Many-to-Many: Posts and Tags\n');
-
   // Create tags
   final tag1 = await db.query<Tag>().create({'name': 'Technology'});
   final tag2 = await db.query<Tag>().create({'name': 'Programming'});
   final tag3 = await db.query<Tag>().create({'name': 'Dart'});
-
-  print('✓ Created tags: ${tag1.name}, ${tag2.name}, ${tag3.name}');
 
   // Create join table for many-to-many (post_tags)
   // In a real scenario, this would be handled by the ORM
@@ -839,12 +690,10 @@ void main() async {
       [post2.id, tag3.id],
     );
 
-    print('✓ Linked posts to tags via join table\n');
-
     // Query posts with their tags (manual join)
     final postsWithTags = await db.query<Post>().findAll();
     for (final post in postsWithTags) {
-      final tagRows = await db.database.rawQuery(
+      await db.database.rawQuery(
         '''
         SELECT t.* FROM tags t
         INNER JOIN post_tags pt ON t.id = pt.tagId
@@ -852,16 +701,10 @@ void main() async {
         ''',
         [post.id],
       );
-
-      final tagNames = tagRows.map((row) => row['name'] as String).join(', ');
-      print(
-          '  - Post: "${post.title}" tagged with: ${tagNames.isEmpty ? "None" : tagNames}');
     }
   } catch (e) {
-    print('  ⚠ Many-to-many example: $e');
+    // Many-to-many example error
   }
-
-  print('');
 
   // ============================================
   // COMPLEX RELATIONSHIP QUERIES
@@ -871,41 +714,29 @@ void main() async {
   // and use raw SQL for complex queries when needed.
   // ============================================
 
-  print('📌 Complex Relationship Queries\n');
-
   // Example 1: Find all posts by a specific user with comment counts
-  print('  Example 1: User posts with comment counts');
   if (user1.id != null) {
     final userPosts = await db
         .query<Post>()
         .whereClause(WhereClause().equals('userId', user1.id!))
         .findAll();
 
-    print('    Posts by ${user1.name}:');
     for (final post in userPosts) {
-      final comments = await db
+      await db
           .query<Comment>()
           .whereClause(WhereClause().equals('postId', post.id))
           .count();
-      print('      - "${post.title}" (${comments} comments)');
     }
   }
 
   // Example 2: Find users who have commented (using raw SQL for DISTINCT)
-  print('\n  Example 2: Users who have commented (using raw SQL)');
-  final commenters = await db.database.rawQuery('''
+  await db.database.rawQuery('''
     SELECT DISTINCT u.* FROM users u
     INNER JOIN comments c ON u.id = c.userId
   ''');
 
-  print('    Found ${commenters.length} user(s) who have commented:');
-  for (final row in commenters) {
-    print('      - ${row['name']} (${row['email']})');
-  }
-
   // Example 3: Find posts with comment count (using raw SQL for aggregation)
-  print('\n  Example 3: Posts with comment counts (aggregation)');
-  final postsWithCounts = await db.database.rawQuery('''
+  await db.database.rawQuery('''
     SELECT p.*, COUNT(c.id) as commentCount
     FROM posts p
     LEFT JOIN comments c ON p.id = c.postId
@@ -913,78 +744,39 @@ void main() async {
     ORDER BY commentCount DESC
   ''');
 
-  print('    Posts sorted by comment count:');
-  for (final row in postsWithCounts) {
-    print('      - "${row['title']}": ${row['commentCount']} comment(s)');
-  }
-
   // Example 4: Find posts by users who have more than 1 post
-  print('\n  Example 4: Users with multiple posts');
   final usersForMultiPost = await db.query<User>().findAll();
   for (final user in usersForMultiPost) {
-    final postCount = await db
+    await db
         .query<Post>()
         .whereClause(WhereClause().equals('userId', user.id))
         .count();
-    if (postCount > 1) {
-      print('      - ${user.name} has $postCount posts');
-    }
   }
 
   // Example 5: Find posts with their author and comment count (nested relationships)
-  print('\n  Example 5: Posts with author info and comment count');
   final publishedPostsForComplex = await db
       .query<Post>()
       .whereClause(WhereClause().equals('published', 1))
       .findAll();
 
   for (final post in publishedPostsForComplex.take(3)) {
-    // Show first 3
     if (post.userId != null) {
-      final author = await db.query<User>().findByPk(post.userId!);
-      final commentCount = await db
+      await db.query<User>().findByPk(post.userId!);
+      await db
           .query<Comment>()
           .whereClause(WhereClause().equals('postId', post.id))
           .count();
-      print('      - "${post.title}"');
-      print('        Author: ${author?.name ?? "Unknown"}');
-      print('        Comments: $commentCount');
     }
   }
-
-  print('');
 
   // ============================================
   // FINAL STATE
   // ============================================
 
-  print('📊 Final Database State\n');
-  final finalUsers = await db.query<User>().findAll();
-  final finalPosts = await db.query<Post>().findAll();
-  final finalComments = await db.query<Comment>().findAll();
-  final finalTags = await db.query<Tag>().findAll();
-
-  print('✓ Total users: ${finalUsers.length}');
-  for (final user in finalUsers) {
-    print('  - ${user.name} (${user.email}) - Phone: ${user.phone ?? "N/A"}');
-  }
-
-  print('✓ Total posts: ${finalPosts.length}');
-  for (final post in finalPosts) {
-    print(
-        '  - ${post.title} (Published: ${post.published}, User: ${post.userId})');
-  }
-
-  print('✓ Total comments: ${finalComments.length}');
-  for (final comment in finalComments) {
-    print(
-        '  - "${comment.content}" (Post: ${comment.postId}, User: ${comment.userId})');
-  }
-
-  print('✓ Total tags: ${finalTags.length}');
-  for (final tag in finalTags) {
-    print('  - ${tag.name}');
-  }
+  await db.query<User>().findAll();
+  await db.query<Post>().findAll();
+  await db.query<Comment>().findAll();
+  await db.query<Tag>().findAll();
 
   // ============================================
   // EAGER LOADING WITH INCLUDE (Sequelize-style)
@@ -994,13 +786,7 @@ void main() async {
   // Similar to Sequelize's include option
   // ============================================
 
-  print('📦 Eager Loading with include() (Sequelize-style)\n');
-
   // Example 1: findAll() with include - Posts with authors
-  print('  Example 1: findAll() with include - Posts with authors');
-  print(
-      '    Similar to: Post.findAll({ include: [{ model: User, as: \'author\' }] })');
-
   final postsWithAuthorsEager = await db
       .query<Post>()
       .include(['author'])
@@ -1008,35 +794,20 @@ void main() async {
       .findAll();
 
   for (final post in postsWithAuthorsEager.take(3)) {
-    final author = post.getRelation<User>('author');
-    print('    - Post: "${post.title}" by ${author?.name ?? "Unknown"}');
+    post.getRelation<User>('author');
   }
 
   // Example 2: findOne() with include - User with posts
-  print('\n  Example 2: findOne() with include - User with posts');
-  print(
-      '    Similar to: User.findOne({ include: [{ model: Post, as: \'posts\' }] })');
-
   if (user1.id != null) {
     final userWithPosts =
         await db.query<User>().include(['posts']).findByPk(user1.id!);
 
     if (userWithPosts != null) {
-      final posts = userWithPosts.getRelationList<Post>('posts');
-      print('    - User: ${userWithPosts.name} has ${posts.length} post(s)');
-      for (final post in posts.take(3)) {
-        print('      • ${post.title}');
-      }
+      userWithPosts.getRelationList<Post>('posts');
     }
   }
 
   // Example 3: findByPk() with multiple includes - Post with author and comments
-  print('\n  Example 3: findByPk() with multiple includes');
-  print('    Similar to: Post.findByPk(1, { include: [');
-  print('      { model: User, as: \'author\' },');
-  print('      { model: Comment, as: \'comments\' }');
-  print('    ]})');
-
   final firstPostId = await db.query<Post>().findFirst();
   if (firstPostId?.id != null) {
     final postWithRelations = await db
@@ -1044,24 +815,12 @@ void main() async {
         .include(['author', 'comments']).findByPk(firstPostId!.id!);
 
     if (postWithRelations != null) {
-      final author = postWithRelations.getRelation<User>('author');
-      final comments = postWithRelations.getRelationList<Comment>('comments');
-      print('    - Post: "${postWithRelations.title}"');
-      print('      Author: ${author?.name ?? "Unknown"}');
-      print('      Comments: ${comments.length}');
-      for (final comment in comments.take(2)) {
-        print('        • "${comment.content}"');
-      }
+      postWithRelations.getRelation<User>('author');
+      postWithRelations.getRelationList<Comment>('comments');
     }
   }
 
   // Example 4: Nested includes - Comment with post and author
-  print('\n  Example 4: Nested includes - Comment with post and author');
-  print('    Similar to: Comment.findOne({ include: [');
-  print('      { model: Post, as: \'post\' },');
-  print('      { model: User, as: \'author\' }');
-  print('    ]})');
-
   final firstComment = await db.query<Comment>().findFirst();
   if (firstComment?.id != null) {
     final commentWithRelations = await db
@@ -1069,44 +828,28 @@ void main() async {
         .include(['post', 'author']).findByPk(firstComment!.id!);
 
     if (commentWithRelations != null) {
-      final post = commentWithRelations.getRelation<Post>('post');
-      final author = commentWithRelations.getRelation<User>('author');
-      print('    - Comment: "${commentWithRelations.content}"');
-      print('      On post: "${post?.title ?? "Unknown"}"');
-      print('      By: ${author?.name ?? "Unknown"}');
+      commentWithRelations.getRelation<Post>('post');
+      commentWithRelations.getRelation<User>('author');
     }
   }
 
   // Example 5: User with posts and comments count
-  print('\n  Example 5: findAll() with include - Users with their posts');
-  print(
-      '    Similar to: User.findAll({ include: [{ model: Post, as: \'posts\' }] })');
-
   final usersWithPosts =
       await db.query<User>().include(['posts']).limit(3).findAll();
 
   for (final user in usersWithPosts) {
-    final posts = user.getRelationList<Post>('posts');
-    print('    - ${user.name}: ${posts.length} post(s)');
+    user.getRelationList<Post>('posts');
   }
-
-  print('');
 
   // ============================================
   // WEB UI (automatically started when debug: true)
   // ============================================
-
-  print('\n🌐 Web UI is running (started automatically with debug mode)');
-  print('✓ Access at: http://localhost:4800');
-  print('\nPress Ctrl+C to stop the server\n');
 
   // Keep the process alive
   try {
     await Future.delayed(Duration(days: 1));
   } catch (e) {
     // Handle interruption
-    print('\n🛑 Shutting down...');
     await db.close();
-    print('✓ Cleanup completed');
   }
 }

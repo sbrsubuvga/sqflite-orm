@@ -257,13 +257,36 @@ final db = await DatabaseManager.initialize(
   webDebugPort: 4800,
   // webDebugPassword: 'secret', // Optional password protection
 );
-
-// Access at http://localhost:4800
 ```
+
+When the Web UI starts, you'll see output like:
+
+```
+✓ Web UI server started
+  Local:   http://localhost:4800
+  Network: http://192.168.1.100:4800
+  (Access from your PC using the Network URL above)
+```
+
+**Accessing from PC when debugging on Android:**
+
+When debugging your Flutter app on an Android device, the Web UI server automatically:
+- Binds to all network interfaces (0.0.0.0) to allow network access
+- Detects and displays your device's local IP address
+- Provides both Local and Network URLs
+
+**To access from your PC:**
+1. Ensure both your PC and Android device are on the same Wi‑Fi network
+2. Use the **Network URL** shown in the console output (e.g., `http://192.168.1.100:4800`)
+3. Open this URL in your PC's browser to access the Web UI
+
+**Note:** The Local URL (`http://localhost:4800`) works when running on emulators or when accessing from the device itself.
 
 ## Web UI Features
 
 The web UI provides a modern interface for database management:
+
+![Web UI Screenshot](web-ui-screenshot.png)
 
 - **Table Browser**: Left sidebar listing all database tables
 - **Data Grid**: Browse and view table data with pagination
@@ -271,8 +294,17 @@ The web UI provides a modern interface for database management:
 - **SQL Query Editor**: Execute custom SQL queries
 - **Schema Viewer**: View table structure and column information
 - **Password Protection**: Optional authentication for secure access
+- **Network Access**: Access from your PC when debugging on Android devices
 
-Access the web UI at `http://localhost:4800` (or your configured port).
+### Accessing the Web UI
+
+**Local Access (Emulator/Desktop):**
+- Access at `http://localhost:4800` (or your configured port)
+
+**Network Access (Android Device):**
+- When debugging on an Android device, the server automatically detects and displays your device's IP address
+- Use the Network URL shown in the console (e.g., `http://192.168.1.100:4800`) from your PC's browser
+- Both devices must be on the same Wi‑Fi network
 
 ## Query Builder API
 
