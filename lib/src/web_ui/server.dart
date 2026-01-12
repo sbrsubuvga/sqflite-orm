@@ -162,7 +162,7 @@ class WebUI {
     final handler = Pipeline()
         .addMiddleware(corsHandler)
         .addMiddleware(authHandler.middleware)
-        .addHandler(router);
+        .addHandler(router.call);
 
     // Stop existing server if running
     if (_server != null) {
