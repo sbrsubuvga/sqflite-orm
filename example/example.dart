@@ -609,9 +609,8 @@ void main() async {
   for (final user in allUsersWithPosts) {
     await db
         .query<Post>()
-        .whereClause(WhereClause()
-            .equals('userId', user.id)
-            .equals('published', 1))
+        .whereClause(
+            WhereClause().equals('userId', user.id).equals('published', 1))
         .findAll();
   }
 
