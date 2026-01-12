@@ -300,8 +300,7 @@ class QueryBuilder<T extends BaseModel> {
 
     final primaryKey = _modelInfo!.primaryKey;
     if (primaryKey == null) {
-      throw StateError(
-          'Model $_modelType does not have a primary key defined');
+      throw StateError('Model $_modelType does not have a primary key defined');
     }
 
     final tableName = _modelInfo!.tableName;
@@ -596,8 +595,7 @@ class QueryBuilder<T extends BaseModel> {
 
     final primaryKey = _modelInfo!.primaryKey;
     if (primaryKey == null) {
-      throw StateError(
-          'Model $_modelType does not have a primary key defined');
+      throw StateError('Model $_modelType does not have a primary key defined');
     }
 
     final values = model.toMap();
@@ -628,9 +626,7 @@ class QueryBuilder<T extends BaseModel> {
     final tableName = _modelInfo!.tableName;
     final columns = updateValues.keys.toList();
     final setClause = columns.map((col) => '$col = ?').join(', ');
-    final args = <dynamic>[...updateValues.values, primaryKeyValue]
-      
-      ;
+    final args = <dynamic>[...updateValues.values, primaryKeyValue];
 
     final query = 'UPDATE $tableName SET $setClause WHERE $primaryKey = ?';
 

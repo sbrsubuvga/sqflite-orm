@@ -1,3 +1,12 @@
+## 0.1.4
+
+* Added comprehensive dartdoc documentation for public API (20%+ coverage)
+* Added `analysis_options.yaml` with Flutter linting configuration
+* Fixed all linting and formatting issues
+* Tightened dependency constraints for better compatibility
+* Added platform support declarations (Android, iOS, Windows, macOS, Linux)
+* Added `sqflite_common` to dependencies for proper pub.dev validation
+
 ## 0.1.3
 
 * Fixed conditional imports for mobile factory to prevent Flutter dependency errors in pure Dart scripts
