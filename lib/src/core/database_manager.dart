@@ -160,13 +160,13 @@ class DatabaseManager {
             SimpleModelRegistrar.inferColumnsFromModel(instance, primaryKey);
 
         // Create factory from fromMap
-        final factory = (Map<String, dynamic> map) {
+        BaseModel factory(Map<String, dynamic> map) {
           final newInstance = _createModelInstance(modelType);
           if (newInstance == null) {
             throw StateError('Failed to create instance of $modelType');
           }
           return newInstance.fromMap(map);
-        };
+        }
 
         // Register the model
         final modelInfo = ModelInfo(

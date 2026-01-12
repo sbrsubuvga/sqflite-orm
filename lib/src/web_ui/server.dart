@@ -159,7 +159,7 @@ class WebUI {
     });
 
     // Apply middleware
-    final handler = Pipeline()
+    final handler = const Pipeline()
         .addMiddleware(corsHandler)
         .addMiddleware(authHandler.middleware)
         .addHandler(router.call);
@@ -605,16 +605,16 @@ class WebUI {
                 
                 if (data.tables && data.tables.length > 0) {
                     list.innerHTML = data.tables.map(table => 
-                        \`<div class="table-item" onclick="loadTableData('\${table.name}')" id="table-\${table.name}">
+                        `<div class="table-item" onclick="loadTableData('\${table.name}')" id="table-\${table.name}">
                             <span>\${table.name}</span>
-                        </div>\`
+                        </div>`
                     ).join('');
                 } else {
                     list.innerHTML = '<div style="padding: 20px; text-align: center; color: #95a5a6;">No tables found</div>';
                 }
             } catch (error) {
                 document.getElementById('table-list').innerHTML = 
-                    \`<div style="padding: 20px; color: #e74c3c;">Error: \${error.message}</div>\`;
+                    `<div style="padding: 20px; color: #e74c3c;">Error: \${error.message}</div>`;
             }
         }
 
@@ -626,7 +626,7 @@ class WebUI {
             document.querySelectorAll('.table-item').forEach(item => {
                 item.classList.remove('active');
             });
-            const activeItem = document.getElementById(\`table-\${tableName}\`);
+            const activeItem = document.getElementById(`table-\${tableName}`);
             if (activeItem) {
                 activeItem.classList.add('active');
             }
@@ -640,7 +640,7 @@ class WebUI {
 
             try {
                 const response = await fetch(
-                    \`/api/tables/\${tableName}/data?page=\${page}&pageSize=\${pageSize}\`,
+                    `/api/tables/\${tableName}/data?page=\${page}&pageSize=\${pageSize}`,
                     { headers: getAuthHeaders() }
                 );
                 if (!response.ok) throw new Error('Failed to load data');
@@ -652,17 +652,17 @@ class WebUI {
                 if (data.data && data.data.length > 0) {
                     const columns = Object.keys(data.data[0]);
                     const rows = data.data.map(row => 
-                        \`<tr>\${columns.map(col => \`<td>\${row[col] ?? ''}</td>\`).join('')}</tr>\`
+                        `<tr>\${columns.map(col => `<td>\${row[col] ?? ''}</td>`).join('')}</tr>`
                     ).join('');
                     
-                    document.getElementById('data-grid').innerHTML = \`
+                    document.getElementById('data-grid').innerHTML = `
                         <table>
                             <thead>
-                                <tr>\${columns.map(col => \`<th>\${col}</th>\`).join('')}</tr>
+                                <tr>\${columns.map(col => `<th>\${col}</th>`).join('')}</tr>
                             </thead>
                             <tbody>\${rows}</tbody>
                         </table>
-                    \`;
+                    `;
                     
                     // Always render pagination when we have data
                     renderPagination();
@@ -673,7 +673,7 @@ class WebUI {
                 }
             } catch (error) {
                 document.getElementById('data-grid').innerHTML = 
-                    \`<div class="error">Error: \${error.message}</div>\`;
+                    `<div class="error">Error: \${error.message}</div>`;
                 document.getElementById('pagination').style.display = 'none';
             }
         }
@@ -689,22 +689,22 @@ class WebUI {
             const startRow = (currentPage - 1) * pageSize + 1;
             const endRow = Math.min(currentPage * pageSize, totalCount);
             
-            let paginationHTML = \`
+            let paginationHTML = `
                 <div class="pagination-info">
                     Showing \${startRow} to \${endRow} of \${totalCount} rows
                 </div>
-            \`;
+            `;
             
             // Only show page controls if there's more than 1 page
             if (totalPages > 1) {
                 paginationHTML += '<div class="pagination-controls">';
                 
                 // Previous button
-                paginationHTML += \`
+                paginationHTML += `
                     <button class="pagination-btn" onclick="goToPage(\${currentPage - 1})" \${currentPage === 1 ? 'disabled' : ''}>
                         ‹ Previous
                     </button>
-                \`;
+                `;
                 
                 // Page numbers
                 const pageNumbers = getPageNumbers(currentPage, totalPages);
@@ -717,23 +717,23 @@ class WebUI {
                         paginationHTML += '<span style="padding: 0 4px; color: #7f8c8d;">...</span>';
                     }
                     
-                    paginationHTML += \`
+                    paginationHTML += `
                         <button class="pagination-btn \${pageNum === currentPage ? 'active' : ''}" 
                                 onclick="goToPage(\${pageNum})">
                             \${pageNum}
                         </button>
-                    \`;
+                    `;
                     prevPage = pageNum;
                 });
                 
                 paginationHTML += '</div>';
                 
                 // Next button
-                paginationHTML += \`
+                paginationHTML += `
                     <button class="pagination-btn" onclick="goToPage(\${currentPage + 1})" \${currentPage === totalPages ? 'disabled' : ''}>
                         Next ›
                     </button>
-                \`;
+                `;
                 
                 paginationHTML += '</div>';
             }
@@ -831,30 +831,30 @@ class WebUI {
                     if (data.data) {
                         const columns = Object.keys(data.data[0] || {});
                         const rows = data.data.map(row => 
-                            \`<tr>\${columns.map(col => \`<td>\${row[col] ?? ''}</td>\`).join('')}</tr>\`
+                            `<tr>\${columns.map(col => `<td>\${row[col] ?? ''}</td>`).join('')}</tr>`
                         ).join('');
                         
-                        resultDiv.innerHTML = \`
+                        resultDiv.innerHTML = `
                             <div class="success">Query executed successfully</div>
                             <table style="margin-top: 10px;">
                                 <thead>
-                                    <tr>\${columns.map(col => \`<th>\${col}</th>\`).join('')}</tr>
+                                    <tr>\${columns.map(col => `<th>\${col}</th>`).join('')}</tr>
                                 </thead>
                                 <tbody>\${rows}</tbody>
                             </table>
                             <p>Rows returned: \${data.rowCount || 0}</p>
-                        \`;
+                        `;
                     } else {
-                        resultDiv.innerHTML = \`
+                        resultDiv.innerHTML = `
                             <div class="success">Query executed successfully</div>
                             <p>Affected rows: \${data.affectedRows || data.id || 0}</p>
-                        \`;
+                        `;
                     }
                 } else {
-                    resultDiv.innerHTML = \`<div class="error">Error: \${data.error}</div>\`;
+                    resultDiv.innerHTML = `<div class="error">Error: \${data.error}</div>`;
                 }
             } catch (error) {
-                resultDiv.innerHTML = \`<div class="error">Error: \${error.message}</div>\`;
+                resultDiv.innerHTML = `<div class="error">Error: \${error.message}</div>`;
             }
         }
 

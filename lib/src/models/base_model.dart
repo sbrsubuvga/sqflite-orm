@@ -1,17 +1,52 @@
-/// Base class for all ORM models
+/// Base class for all ORM models.
+///
+/// All model classes must extend this class and implement the required methods.
+/// Models should be annotated with [Table] and their fields with [Column].
+///
+/// Example:
+/// ```dart
+/// @Table(name: 'users')
+/// class User extends BaseModel {
+///   @PrimaryKey()
+///   @Column(name: 'id')
+///   int? id;
+///
+///   @Column(name: 'name')
+///   String? name;
+///
+///   @override
+///   Map<String, dynamic> toMap() => {'id': id, 'name': name};
+///
+///   @override
+///   BaseModel fromMap(Map<String, dynamic> map) =>
+///       User()..id = map['id']..name = map['name'];
+///
+///   @override
+///   String get tableName => 'users';
+/// }
+/// ```
 abstract class BaseModel {
-  /// Internal storage for loaded relationships
-  /// This is used by the ORM to store eagerly loaded associations
-  /// Public field to allow AssociationLoader to access it
+  /// Internal storage for loaded relationships.
+  ///
+  /// This is used by the ORM to store eagerly loaded associations.
+  /// Public field to allow AssociationLoader to access it.
   Map<String, dynamic>? relations;
 
-  /// Convert model to map for database operations
+  /// Convert model to map for database operations.
+  ///
+  /// This method is used when inserting or updating records.
+  /// All fields that should be persisted must be included in the returned map.
   Map<String, dynamic> toMap();
 
-  /// Create model from map
+  /// Create model from map.
+  ///
+  /// This method is used when reading records from the database.
+  /// Should create a new instance of the model and populate it with data from the map.
   BaseModel fromMap(Map<String, dynamic> map);
 
-  /// Get the table name for this model
+  /// Get the table name for this model.
+  ///
+  /// Should return the same name as specified in the [Table] annotation.
   String get tableName;
 
   /// Get a loaded relationship by name

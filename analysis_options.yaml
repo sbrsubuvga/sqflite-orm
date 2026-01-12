@@ -1,0 +1,19 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    # Allow print statements for debugging
+    avoid_print: false
+    # Allow relative imports in conditional import files
+    avoid_relative_lib_imports: false
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+  errors:
+    # Treat missing required parameters as warnings, not errors
+    missing_required_param: warning
+    # Treat missing return types as warnings
+    missing_return: warning
+

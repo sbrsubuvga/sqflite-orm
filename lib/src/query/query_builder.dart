@@ -63,26 +63,61 @@ class QueryBuilder<T extends BaseModel> {
     return this;
   }
 
-  /// Add WHERE condition using WhereClause
+  /// Add WHERE condition using a [WhereClause] builder.
+  ///
+  /// This is the recommended way to add WHERE conditions.
+  ///
+  /// Example:
+  /// ```dart
+  /// final users = await db.query<User>()
+  ///   .whereClause(WhereClause()
+  ///     .equals('status', 'active')
+  ///     .greaterThan('age', 18))
+  ///   .findAll();
+  /// ```
   QueryBuilder<T> whereClause(WhereClause clause) {
     _whereClause = clause;
     return this;
   }
 
-  /// Add ORDER BY clause
+  /// Add ORDER BY clause to sort results.
+  ///
+  /// Example:
+  /// ```dart
+  /// final users = await db.query<User>()
+  ///   .orderBy('createdAt', descending: true)
+  ///   .findAll();
+  /// ```
   QueryBuilder<T> orderBy(String column, {bool descending = false}) {
     _orderBy = column;
     _orderDesc = descending;
     return this;
   }
 
-  /// Add LIMIT clause
+  /// Add LIMIT clause to restrict the number of results.
+  ///
+  /// Example:
+  /// ```dart
+  /// final users = await db.query<User>()
+  ///   .limit(10)
+  ///   .findAll();
+  /// ```
   QueryBuilder<T> limit(int count) {
     _limit = count;
     return this;
   }
 
-  /// Add OFFSET clause
+  /// Add OFFSET clause for pagination.
+  ///
+  /// Typically used with [limit] for pagination.
+  ///
+  /// Example:
+  /// ```dart
+  /// final users = await db.query<User>()
+  ///   .limit(10)
+  ///   .offset(20)
+  ///   .findAll();
+  /// ```
   QueryBuilder<T> offset(int count) {
     _offset = count;
     return this;
@@ -122,7 +157,14 @@ class QueryBuilder<T extends BaseModel> {
     return this;
   }
 
-  /// Select specific columns
+  /// Select specific columns instead of all columns.
+  ///
+  /// Example:
+  /// ```dart
+  /// final users = await db.query<User>()
+  ///   .select(['id', 'name', 'email'])
+  ///   .findAll();
+  /// ```
   QueryBuilder<T> select(List<String> columns) {
     _selectColumns = columns;
     return this;
@@ -152,7 +194,7 @@ class QueryBuilder<T extends BaseModel> {
   /// ```
   Future<List<T>> findAll() async {
     if (_modelInfo == null) {
-      throw StateError('Model ${_modelType} not registered');
+      throw StateError('Model $_modelType not registered');
     }
 
     final tableName = _modelInfo!.tableName;
@@ -253,13 +295,13 @@ class QueryBuilder<T extends BaseModel> {
   /// ```
   Future<T?> findByPk(dynamic primaryKeyValue) async {
     if (_modelInfo == null) {
-      throw StateError('Model ${_modelType} not registered');
+      throw StateError('Model $_modelType not registered');
     }
 
     final primaryKey = _modelInfo!.primaryKey;
     if (primaryKey == null) {
       throw StateError(
-          'Model ${_modelType} does not have a primary key defined');
+          'Model $_modelType does not have a primary key defined');
     }
 
     final tableName = _modelInfo!.tableName;
@@ -299,10 +341,19 @@ class QueryBuilder<T extends BaseModel> {
     return model;
   }
 
-  /// Count matching records
+  /// Count matching records.
+  ///
+  /// Returns the number of records that match the current query conditions.
+  ///
+  /// Example:
+  /// ```dart
+  /// final count = await db.query<User>()
+  ///   .whereClause(WhereClause().equals('status', 'active'))
+  ///   .count();
+  /// ```
   Future<int> count() async {
     if (_modelInfo == null) {
-      throw StateError('Model ${_modelType} not registered');
+      throw StateError('Model $_modelType not registered');
     }
 
     final tableName = _modelInfo!.tableName;
@@ -319,10 +370,20 @@ class QueryBuilder<T extends BaseModel> {
     return result.first['count'] as int;
   }
 
-  /// Delete matching records
+  /// Delete matching records.
+  ///
+  /// Returns the number of deleted records.
+  /// **Warning**: If no WHERE clause is specified, all records will be deleted.
+  ///
+  /// Example:
+  /// ```dart
+  /// final deleted = await db.query<User>()
+  ///   .whereClause(WhereClause().equals('id', 123))
+  ///   .delete();
+  /// ```
   Future<int> delete() async {
     if (_modelInfo == null) {
-      throw StateError('Model ${_modelType} not registered');
+      throw StateError('Model $_modelType not registered');
     }
 
     final tableName = _modelInfo!.tableName;
@@ -352,7 +413,7 @@ class QueryBuilder<T extends BaseModel> {
   /// ```
   Future<T> create(Map<String, dynamic> values) async {
     if (_modelInfo == null) {
-      throw StateError('Model ${_modelType} not registered');
+      throw StateError('Model $_modelType not registered');
     }
 
     final tableName = _modelInfo!.tableName;
@@ -424,7 +485,7 @@ class QueryBuilder<T extends BaseModel> {
   /// ```
   Future<int> insert(T model) async {
     if (_modelInfo == null) {
-      throw StateError('Model ${_modelType} not registered');
+      throw StateError('Model $_modelType not registered');
     }
 
     final tableName = _modelInfo!.tableName;
@@ -479,7 +540,7 @@ class QueryBuilder<T extends BaseModel> {
   /// ```
   Future<int> updateValues(Map<String, dynamic> values) async {
     if (_modelInfo == null) {
-      throw StateError('Model ${_modelType} not registered');
+      throw StateError('Model $_modelType not registered');
     }
 
     if (values.isEmpty) {
@@ -499,7 +560,7 @@ class QueryBuilder<T extends BaseModel> {
     final tableName = _modelInfo!.tableName;
     final columns = processedValues.keys.toList();
     final setClause = columns.map((col) => '$col = ?').join(', ');
-    final args = <dynamic>[]..addAll(processedValues.values);
+    final args = <dynamic>[...processedValues.values];
 
     var query = 'UPDATE $tableName SET $setClause';
 
@@ -530,13 +591,13 @@ class QueryBuilder<T extends BaseModel> {
   /// ```
   Future<int> update(T model) async {
     if (_modelInfo == null) {
-      throw StateError('Model ${_modelType} not registered');
+      throw StateError('Model $_modelType not registered');
     }
 
     final primaryKey = _modelInfo!.primaryKey;
     if (primaryKey == null) {
       throw StateError(
-          'Model ${_modelType} does not have a primary key defined');
+          'Model $_modelType does not have a primary key defined');
     }
 
     final values = model.toMap();
@@ -567,9 +628,9 @@ class QueryBuilder<T extends BaseModel> {
     final tableName = _modelInfo!.tableName;
     final columns = updateValues.keys.toList();
     final setClause = columns.map((col) => '$col = ?').join(', ');
-    final args = <dynamic>[]
-      ..addAll(updateValues.values)
-      ..add(primaryKeyValue);
+    final args = <dynamic>[...updateValues.values, primaryKeyValue]
+      
+      ;
 
     final query = 'UPDATE $tableName SET $setClause WHERE $primaryKey = ?';
 

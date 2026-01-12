@@ -846,7 +846,7 @@ void main() async {
 
   // Keep the process alive
   try {
-    await Future.delayed(Duration(days: 1));
+    await Future.delayed(const Duration(days: 1));
   } catch (e) {
     // Handle interruption
     await db.close();
