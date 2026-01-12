@@ -286,7 +286,7 @@ When debugging your Flutter app on an Android device, the Web UI server automati
 
 The web UI provides a modern interface for database management:
 
-![Web UI Screenshot](Screenshot%202026-01-11%20at%209.29.35%20AM.png)
+![Web UI Screenshot](https://raw.githubusercontent.com/sbrsubuvga/sqflite-orm/refs/heads/main/Screenshot%202026-01-11%20at%209.29.35%E2%80%AFAM.png)
 
 - **Table Browser**: Left sidebar listing all database tables
 - **Data Grid**: Browse and view table data with pagination
