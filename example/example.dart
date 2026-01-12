@@ -195,22 +195,29 @@ void main() async {
     // Custom onCreate callback (called when database is first created)
     onCreate: (Database db, int version) {
       // Additional setup can be done here
-      // Note: For async operations, use .then() or handle them synchronously
+      // Note: The callback is synchronous, but you can use .then() for async operations
+      // For example: db.execute('...').then((_) => print('Done')).catchError((e) => print(e));
       return null;
     },
     // Custom onUpgrade callback (called when version changes)
     onUpgrade: (Database db, int oldVersion, int newVersion) {
       // Manual migration example
+      // Note: The callback is synchronous, but database operations return Futures
+      // Use .then() and .catchError() for async operations
       if (oldVersion < 2) {
         // These will be added automatically by MigrationManager,
         // but you can add custom migration logic here
-        db.execute('ALTER TABLE users ADD COLUMN phone TEXT').catchError((e) {
-          // Migration error handling
+        db.execute('ALTER TABLE users ADD COLUMN phone TEXT').then((_) {
+          // Success
+        }).catchError((e) {
+          // Migration error handling - column might already exist
+          print('Migration note: $e');
         });
-        db
-            .execute('ALTER TABLE users ADD COLUMN createdAt TEXT')
-            .catchError((e) {
-          // Migration error handling
+        db.execute('ALTER TABLE users ADD COLUMN createdAt TEXT').then((_) {
+          // Success
+        }).catchError((e) {
+          // Migration error handling - column might already exist
+          print('Migration note: $e');
         });
       }
       return null;
@@ -602,8 +609,9 @@ void main() async {
   for (final user in allUsersWithPosts) {
     await db
         .query<Post>()
-        .whereClause(WhereClause().equals('userId', user.id))
-        .whereClause(WhereClause().equals('published', 1))
+        .whereClause(WhereClause()
+            .equals('userId', user.id)
+            .equals('published', 1))
         .findAll();
   }
 

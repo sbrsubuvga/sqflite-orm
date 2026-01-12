@@ -6,7 +6,6 @@ import 'package:sqflite_orm/src/models/base_model.dart';
 import 'package:sqflite_orm/src/models/model_registrar.dart';
 import 'package:sqflite_orm/src/models/model_registry.dart';
 import 'package:sqflite_orm/src/query/query_builder.dart';
-import 'package:sqflite_orm/src/web_ui/server.dart' show WebUI;
 
 // Import common types from sqflite_common (used by both sqflite and sqflite_common_ffi)
 import 'package:sqflite_common/sqlite_api.dart'
@@ -15,6 +14,9 @@ import 'package:sqflite_common/sqlite_api.dart'
 // Conditional imports for platform-specific database factory
 import 'database_factory_stub.dart'
     if (dart.library.io) 'database_factory_io.dart';
+
+// Import sqflite_dev - it supports both Flutter and pure Dart
+import 'package:sqflite_dev/sqflite_dev.dart';
 
 /// Main database manager for cross-platform SQLite operations
 class DatabaseManager {
@@ -113,11 +115,15 @@ class DatabaseManager {
     // Start Web UI if web debug mode is enabled
     if (webDebug) {
       try {
-        await WebUI.start(
-          manager.database,
+        // Use sqflite_dev to enable workbench (web UI) for the database
+        // sqflite_dev supports both Flutter and pure Dart
+        manager.database.enableWorkbench(
+          name: 'sqflite_orm',
           port: webDebugPort,
-          password: webDebugPassword,
         );
+        if (webDebugPassword != null && webDebugPassword.isNotEmpty) {
+          print('⚠️  Note: sqflite_dev does not support password protection');
+        }
       } catch (e) {
         print('⚠️  Failed to start Web UI: $e');
         // Don't fail initialization if Web UI fails to start
