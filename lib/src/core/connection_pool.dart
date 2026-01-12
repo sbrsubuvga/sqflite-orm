@@ -1,4 +1,4 @@
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' show Database;
+import 'package:sqflite_common/sqlite_api.dart' show Database;
 
 /// Manages database connections
 class ConnectionPool {

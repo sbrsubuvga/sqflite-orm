@@ -1,5 +1,5 @@
 import 'package:shelf/shelf.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' show Database;
+import 'package:sqflite_common/sqlite_api.dart' show Database;
 import 'dart:convert';
 
 /// Route handler for table operations

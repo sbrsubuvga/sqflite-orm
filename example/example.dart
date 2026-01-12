@@ -1,5 +1,5 @@
 import 'package:sqflite_orm/sqflite_orm.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' show Database, Transaction;
+import 'package:sqflite_common/sqlite_api.dart' show Database, Transaction;
 
 // ============================================
 // MODEL DEFINITIONS
@@ -177,6 +177,8 @@ void main() async {
   // ============================================
   // DATABASE INITIALIZATION WITH MIGRATIONS
   // ============================================
+  // Note: FFI initialization for desktop platforms is handled automatically
+  // by the DatabaseManager when using sqflite_common_ffi
 
   // Version 1: Initial schema with basic User model
   // Version 2: Add phone and createdAt to User, add Post, Comment, Tag models

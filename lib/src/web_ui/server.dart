@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' show Database;
+import 'package:sqflite_common/sqlite_api.dart' show Database;
 import 'package:sqflite_orm/src/web_ui/handlers/auth_handler.dart';
 import 'package:sqflite_orm/src/web_ui/handlers/cors_handler.dart';
 import 'package:sqflite_orm/src/web_ui/routes/tables_route.dart';

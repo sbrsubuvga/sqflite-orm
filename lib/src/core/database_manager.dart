@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' as ffi;
 import 'package:sqflite_orm/src/core/connection_pool.dart';
 import 'package:sqflite_orm/src/core/migration_manager.dart';
 import 'package:sqflite_orm/src/core/schema_validator.dart';
@@ -9,8 +8,12 @@ import 'package:sqflite_orm/src/models/model_registry.dart';
 import 'package:sqflite_orm/src/query/query_builder.dart';
 import 'package:sqflite_orm/src/web_ui/server.dart' show WebUI;
 
-// Import Database type from sqflite_common_ffi
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' show Database, Transaction;
+// Import common types from sqflite_common (used by both sqflite and sqflite_common_ffi)
+import 'package:sqflite_common/sqlite_api.dart' show Database, Transaction, DatabaseFactory, OpenDatabaseOptions;
+
+// Conditional imports for platform-specific database factory
+import 'database_factory_stub.dart'
+    if (dart.library.io) 'database_factory_io.dart';
 
 /// Main database manager for cross-platform SQLite operations
 class DatabaseManager {
@@ -26,7 +29,7 @@ class DatabaseManager {
   final MigrationManager _migrationManager = MigrationManager();
   final SchemaValidator _schemaValidator = SchemaValidator();
 
-  static bool _ffiInitialized = false;
+  static DatabaseFactory? _databaseFactory;
 
   DatabaseManager({
     required this.path,
@@ -36,16 +39,16 @@ class DatabaseManager {
     this.onCreate,
   });
 
-  /// Initialize FFI for desktop platforms (called automatically)
-  /// This is safe to call multiple times - it only initializes once
-  static void _ensureFfiInitialized() {
-    if (_ffiInitialized) return;
-
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      ffi.sqfliteFfiInit();
-      ffi.databaseFactory = ffi.databaseFactoryFfiNoIsolate;
-      _ffiInitialized = true;
+  /// Get the appropriate database factory for the current platform
+  /// - Mobile (Android/iOS): uses sqflite (native plugin)
+  /// - Desktop (Windows/Linux/macOS): uses sqflite_common_ffi (FFI)
+  static DatabaseFactory _getDatabaseFactory() {
+    if (_databaseFactory != null) {
+      return _databaseFactory!;
     }
+
+    _databaseFactory = getDatabaseFactory();
+    return _databaseFactory!;
   }
 
   /// Initialize the database manager
@@ -232,18 +235,18 @@ class DatabaseManager {
   }
 
   Future<void> _initializeDatabase() async {
-    // Initialize FFI for desktop platforms (if needed)
-    _ensureFfiInitialized();
+    // Get the appropriate database factory for the current platform
+    final factory = _getDatabaseFactory();
 
     // Get database path
     final dbPath = await _getDatabasePath(path);
 
     // Open database using the appropriate factory
-    // FFI is initialized automatically for desktop platforms
-    // For mobile platforms, the default factory is used
-    _database = await ffi.databaseFactory.openDatabase(
+    // Mobile: uses sqflite (native plugin)
+    // Desktop: uses sqflite_common_ffi (FFI)
+    _database = await factory.openDatabase(
       dbPath,
-      options: ffi.OpenDatabaseOptions(
+      options: OpenDatabaseOptions(
         version: version,
         onCreate: (db, version) async {
           // Database is being created for the first time

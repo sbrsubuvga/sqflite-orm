@@ -10,8 +10,7 @@ environment:
   sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  # sqflite is optional - only needed for Flutter mobile apps
-  # sqflite: ^2.3.0
+  sqflite: ^2.3.0
   sqflite_common_ffi: ^2.3.0
   # path_provider is optional - only needed for Flutter apps
   # path_provider: ^2.1.0
