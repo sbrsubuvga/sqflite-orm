@@ -1,3 +1,10 @@
+## 0.1.6
+
+* Added sqflite back to package dependencies - package now manages it automatically
+* Users no longer need to manually add sqflite to their pubspec.yaml
+* Fixed pub.dev validation issues (shortened description to meet 60-180 character requirement)
+* Improved installation experience - single dependency required
+
 ## 0.1.5
 
 * Simplified sqflite_dev integration - removed unnecessary conditional imports
