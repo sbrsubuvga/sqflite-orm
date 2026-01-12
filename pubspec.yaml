@@ -1,5 +1,5 @@
 name: sqflite_orm
-description: A comprehensive Flutter/Dart SQLite ORM package with cross-platform support (works with both Flutter and pure Dart on desktop), automatic migrations, relationship handling, query builder, and web-based database management UI.
+description: Cross-platform SQLite ORM for Flutter and Dart with automatic migrations, relationships, query builder, and web UI.
 version: 0.1.5
 homepage: https://github.com/sbrsubuvga/sqflite-orm
 repository: https://github.com/sbrsubuvga/sqflite-orm
@@ -21,8 +21,6 @@ dependencies:
   sqflite_common: ^2.5.6
   sqflite_common_ffi: ^2.4.0+2
   sqflite_dev: ^1.0.4
-  # path_provider is optional - only needed for Flutter apps
-  # path_provider: ^2.1.0
   meta: ^1.17.0
   collection: ^1.19.1
 
