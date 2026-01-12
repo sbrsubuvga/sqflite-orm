@@ -22,7 +22,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.6
+  sqflite_orm: ^0.1.7
 ```
 
 ## Quick Start

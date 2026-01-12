@@ -1,3 +1,10 @@
+## 0.1.7
+
+* Updated sqflite_dev to ^1.0.5 (latest version)
+* Updated Web UI screenshot in README
+* Enhanced documentation for DatabaseManager constructor and registerInstanceCreator method
+* All code passes Flutter analysis with no issues
+
 ## 0.1.6
 
 * Added sqflite back to package dependencies - package now manages it automatically
