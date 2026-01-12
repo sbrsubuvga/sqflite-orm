@@ -13,7 +13,7 @@ A comprehensive Flutter/Dart SQLite ORM package with cross-platform support (des
 - **Query Builder**: Fluent, type-safe query API with `findAll()`, `findOne()`, `findByPk()`
 - **CRUD Operations**: `create()`, `insert()`, `update()`, `delete()` methods
 - **Web UI**: Full-featured database management interface with pagination and table browser
-- **Web Debug Mode**: Automatically start Web UI during development
+- **Web Debug Mode**: Automatically start Web UI during development (works in both Flutter and pure Dart)
 - **Transactions**: Full transaction support with rollback
 
 ## Installation
