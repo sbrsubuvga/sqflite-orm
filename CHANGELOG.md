@@ -1,3 +1,9 @@
+## 0.1.3
+
+* Fixed conditional imports for mobile factory to prevent Flutter dependency errors in pure Dart scripts
+* Improved platform detection logic to prioritize desktop platforms
+* Example now works correctly in both Flutter apps and pure Dart scripts
+
 ## 0.1.2
 
 * Added Finzo example app reference in README
