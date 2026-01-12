@@ -22,7 +22,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.4
+  sqflite_orm: ^0.1.5
 ```
 
 ## Quick Start
@@ -255,7 +255,7 @@ final db = await DatabaseManager.initialize(
   // Automatically start Web UI
   webDebug: true,
   webDebugPort: 4800,
-  // webDebugPassword: 'secret', // Optional password protection
+  // webDebugPassword: 'secret', // Note: sqflite_dev does not support password protection
 );
 ```
 
@@ -293,8 +293,8 @@ The web UI provides a modern interface for database management:
 - **Pagination**: Configurable page size (10, 25, 50, 100, 200 rows)
 - **SQL Query Editor**: Execute custom SQL queries
 - **Schema Viewer**: View table structure and column information
-- **Password Protection**: Optional authentication for secure access
 - **Network Access**: Access from your PC when debugging on Android devices
+- **Cross-Platform**: Works in both Flutter and pure Dart environments
 
 ### Accessing the Web UI
 

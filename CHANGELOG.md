@@ -1,3 +1,9 @@
+## 0.1.5
+
+* Simplified sqflite_dev integration - removed unnecessary conditional imports
+* sqflite_dev now directly imported since it supports both Flutter and pure Dart
+* Improved code simplicity and maintainability
+
 ## 0.1.4
 
 * Added comprehensive dartdoc documentation for public API (20%+ coverage)
