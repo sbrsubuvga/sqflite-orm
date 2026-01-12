@@ -34,6 +34,12 @@ class DatabaseManager {
 
   static DatabaseFactory? _databaseFactory;
 
+  /// Create a database manager instance.
+  ///
+  /// Usually you should use [DatabaseManager.initialize] instead of this constructor
+  /// to automatically set up the database and register models.
+  ///
+  /// This constructor is useful when you need more control over the initialization process.
   DatabaseManager({
     required this.path,
     required this.version,
@@ -209,8 +215,15 @@ class DatabaseManager {
   /// Used for auto-registration
   static final Map<Type, BaseModel Function()> _instanceCreators = {};
 
-  /// Register an instance creator for auto-registration
-  /// This allows models to be auto-registered during DatabaseManager.initialize()
+  /// Register an instance creator for auto-registration.
+  ///
+  /// This allows models to be auto-registered during [DatabaseManager.initialize].
+  /// Instance creators are used to create model instances when auto-registering models.
+  ///
+  /// Example:
+  /// ```dart
+  /// DatabaseManager.registerInstanceCreator<User>(() => User());
+  /// ```
   static void registerInstanceCreator<T extends BaseModel>(
       T Function() creator) {
     _instanceCreators[T] = creator;
