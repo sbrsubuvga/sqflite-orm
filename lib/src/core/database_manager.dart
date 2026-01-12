@@ -9,7 +9,8 @@ import 'package:sqflite_orm/src/query/query_builder.dart';
 import 'package:sqflite_orm/src/web_ui/server.dart' show WebUI;
 
 // Import common types from sqflite_common (used by both sqflite and sqflite_common_ffi)
-import 'package:sqflite_common/sqlite_api.dart' show Database, Transaction, DatabaseFactory, OpenDatabaseOptions;
+import 'package:sqflite_common/sqlite_api.dart'
+    show Database, Transaction, DatabaseFactory, OpenDatabaseOptions;
 
 // Conditional imports for platform-specific database factory
 import 'database_factory_stub.dart'

@@ -8,7 +8,8 @@ import 'database_factory_mobile_stub.dart'
     if (dart.library.ui) 'database_factory_mobile_io.dart' as mobile_factory;
 // Conditional import for desktop factory - only when FFI is available
 import 'database_factory_desktop_stub.dart'
-    if (dart.library.ffi) 'database_factory_desktop_ffi.dart' as desktop_factory;
+    if (dart.library.ffi) 'database_factory_desktop_ffi.dart'
+    as desktop_factory;
 
 /// Get the appropriate database factory based on platform
 /// - Mobile (Android/iOS): uses sqflite (Flutter plugin) - only in Flutter apps
@@ -18,7 +19,7 @@ DatabaseFactory getDatabaseFactory() {
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     return desktop_factory.getDatabaseFactory();
   }
-  
+
   // For mobile platforms, try to use sqflite (Flutter plugin)
   // This will only work in Flutter apps, not in pure Dart
   if (Platform.isAndroid || Platform.isIOS) {
@@ -29,8 +30,7 @@ DatabaseFactory getDatabaseFactory() {
       return desktop_factory.getDatabaseFactory();
     }
   }
-  
+
   // Fallback to desktop factory for unknown platforms
   return desktop_factory.getDatabaseFactory();
 }
-

@@ -4,5 +4,3 @@ import 'package:sqflite_common/sqlite_api.dart' show DatabaseFactory;
 DatabaseFactory getDatabaseFactory() {
   throw UnsupportedError('Platform not supported');
 }
-
-

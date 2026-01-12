@@ -9,5 +9,3 @@ DatabaseFactory getDatabaseFactory() {
   // Return the sqflite databaseFactory for mobile platforms
   return databaseFactory;
 }
-
-

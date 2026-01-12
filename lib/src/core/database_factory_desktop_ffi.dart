@@ -11,4 +11,3 @@ DatabaseFactory getDatabaseFactory() {
   }
   return ffi.databaseFactoryFfiNoIsolate;
 }
-
