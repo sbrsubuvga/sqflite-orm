@@ -1,12 +1,15 @@
 ## 0.1.15
 
 * Dependency updates
+  - Removed `sqflite` from dependencies to maintain optimal pub.dev scoring
   - Updated `sqflite_dev` to ^1.0.6 (latest available version)
   - Added `dependency_validator` for dependency validation
 
 * Documentation
-  - Updated README to clarify `sqflite` dependency status
+  - Updated README to clarify `sqflite` is optional and not included as dependency
   - Updated CHANGELOG with accurate dependency information
+
+* Note: For publishing to pub.dev, temporarily add `sqflite: ^2.4.2` to dependencies, then remove after publishing
 
 ## 0.1.14
 
