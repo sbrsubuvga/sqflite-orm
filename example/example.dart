@@ -126,7 +126,8 @@ void main() async {
   // Note: If you change the schema, increment the version to trigger migrations
   final db = await DatabaseManager.initialize(
     path: 'example.db',
-    version: 2, // Incremented to handle schema changes (added age, views fields)
+    version:
+        2, // Incremented to handle schema changes (added age, views fields)
     models: [User, Post],
     instanceCreators: {
       User: () => User(),
@@ -297,10 +298,7 @@ void main() async {
       .findAll();
 
   // WHERE with IS NULL
-  await db
-      .query<User>()
-      .whereClause(WhereClause().isNull('phone'))
-      .findAll();
+  await db.query<User>().whereClause(WhereClause().isNull('phone')).findAll();
 
   // WHERE with IS NOT NULL
   await db
@@ -383,10 +381,7 @@ void main() async {
   // ============================================
 
   // Select specific columns
-  await db
-      .query<User>()
-      .select(['id', 'name', 'email'])
-      .findAll();
+  await db.query<User>().select(['id', 'name', 'email']).findAll();
 
   print('Select specific columns executed successfully');
 
@@ -398,10 +393,7 @@ void main() async {
   await db.query<User>().count();
 
   // Count with WHERE clause
-  await db
-      .query<User>()
-      .whereClause(WhereClause().equals('active', 1))
-      .count();
+  await db.query<User>().whereClause(WhereClause().equals('active', 1)).count();
 
   // Count with complex WHERE
   await db
@@ -429,30 +421,24 @@ void main() async {
   }
 
   // Example 2: findOne() with include - User with posts
-  final userWithPosts = await db
-      .query<User>()
-      .include(['posts'])
-      .findByPk(user1.id!);
+  final userWithPosts =
+      await db.query<User>().include(['posts']).findByPk(user1.id!);
   if (userWithPosts != null) {
     userWithPosts.getRelationList<Post>('posts');
     // Access: userWithPosts.getRelationList<Post>('posts') returns List<Post>
   }
 
   // Example 3: findByPk() with multiple includes - Post with author
-  final postWithAuthor = await db
-      .query<Post>()
-      .include(['author'])
-      .findByPk(post1.id!);
+  final postWithAuthor =
+      await db.query<Post>().include(['author']).findByPk(post1.id!);
   if (postWithAuthor != null) {
     postWithAuthor.getRelation<User>('author');
     // Access: postWithAuthor.getRelation<User>('author') returns User?
   }
 
   // Example 4: findFirst() with include
-  final firstPostWithAuthor = await db
-      .query<Post>()
-      .include(['author'])
-      .findFirst();
+  final firstPostWithAuthor =
+      await db.query<Post>().include(['author']).findFirst();
   if (firstPostWithAuthor != null) {
     firstPostWithAuthor.getRelation<User>('author');
     // Access: firstPostWithAuthor.getRelation<User>('author') returns User?
@@ -484,11 +470,8 @@ void main() async {
   }
 
   // Example 7: findAll() with include - Users with their posts
-  final usersWithPostsList = await db
-      .query<User>()
-      .include(['posts'])
-      .limit(10)
-      .findAll();
+  final usersWithPostsList =
+      await db.query<User>().include(['posts']).limit(10).findAll();
   for (final user in usersWithPostsList) {
     user.getRelationList<Post>('posts');
     // Access: user.getRelationList<Post>('posts') returns List<Post>
@@ -506,10 +489,8 @@ void main() async {
   }
 
   // Example 9: Using withRelations() alias (same as include)
-  final postsWithRelations = await db
-      .query<Post>()
-      .withRelations(['author'])
-      .findAll();
+  final postsWithRelations =
+      await db.query<Post>().withRelations(['author']).findAll();
   for (final post in postsWithRelations) {
     post.getRelation<User>('author');
     // Access: post.getRelation<User>('author') returns User?
@@ -519,9 +500,8 @@ void main() async {
   final complexPostsWithAuthors = await db
       .query<Post>()
       .include(['author'])
-      .whereClause(WhereClause()
-          .equals('published', 1)
-          .greaterThan('views', 50))
+      .whereClause(
+          WhereClause().equals('published', 1).greaterThan('views', 50))
       .orderBy('createdAt', descending: true)
       .limit(10)
       .findAll();
@@ -559,7 +539,8 @@ void main() async {
   // Method 4: Update with complex WHERE
   await db
       .query<Post>()
-      .whereClause(WhereClause().equals('published', 1).greaterThan('views', 50))
+      .whereClause(
+          WhereClause().equals('published', 1).greaterThan('views', 50))
       .updateValues({'views': 0});
 
   print('Update operations executed successfully');
