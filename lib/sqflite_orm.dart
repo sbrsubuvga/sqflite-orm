@@ -2,7 +2,7 @@
 ///
 /// A comprehensive ORM solution with cross-platform support,
 /// automatic migrations, relationship handling, and query builder.
-library sqflite_orm;
+library;
 
 // Core exports
 export 'src/core/database_manager.dart';

@@ -70,7 +70,7 @@ class ModelInfo {
 
   /// Factory function to create model instances from database rows.
   ///
-  /// This function is used to convert database rows (Map<String, dynamic>)
+  /// This function is used to convert database rows (`Map<String, dynamic>`)
   /// into model instances. If not provided, models must implement [BaseModel.fromMap].
   final BaseModel Function(Map<String, dynamic>)? factory;
 
