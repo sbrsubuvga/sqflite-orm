@@ -1,3 +1,13 @@
+## 0.1.15
+
+* Dependency updates
+  - Updated `sqflite_dev` to ^1.0.6 (latest available version)
+  - Added `dependency_validator` for dependency validation
+
+* Documentation
+  - Updated README to clarify `sqflite` dependency status
+  - Updated CHANGELOG with accurate dependency information
+
 ## 0.1.14
 
 * Improved conditional import architecture for cross-platform support
