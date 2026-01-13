@@ -16,7 +16,10 @@ import 'database_factory_desktop_stub.dart'
 ///
 /// **Platform Selection:**
 /// - **Desktop (Windows/Linux/macOS)**: Always uses `sqflite_common_ffi` (works in Flutter and pure Dart)
-/// - **Mobile (Android/iOS)**: Always uses `sqflite_common_ffi` (FFI works on mobile too)
+/// - **Mobile (Android/iOS) in Flutter apps**:
+///   - Prefers `sqflite` if available (native plugin, better performance)
+///   - Falls back to `sqflite_common_ffi` if `sqflite` not available (FFI works on mobile too)
+/// - **Mobile (Android/iOS) in pure Dart**: Always uses `sqflite_common_ffi` (sqflite is Flutter-only)
 ///
 /// **Important Notes:**
 /// - `sqflite_common_ffi` works on ALL platforms including Android/iOS (uses FFI)
@@ -28,14 +31,18 @@ DatabaseFactory getDatabaseFactory() {
     return desktop_factory.getDatabaseFactory();
   }
 
-  // For mobile platforms: always use sqflite_common_ffi (sqflite no longer supported)
+  // For mobile platforms:
+  // - In Flutter apps: try to use sqflite (if user added it), fallback to sqflite_common_ffi
+  // - In pure Dart: always use sqflite_common_ffi (sqflite is not available)
   if (Platform.isAndroid || Platform.isIOS) {
-    // Always fallback to desktop factory (sqflite_common_ffi)
-    // sqflite is no longer supported in this package
+    // Check if we're in Flutter (dart.library.ui available)
+    // If not, we're in pure Dart and must use sqflite_common_ffi
     try {
       return mobile_factory.getDatabaseFactory();
     } catch (e) {
-      // Fallback to desktop factory (sqflite_common_ffi)
+      // Fallback to desktop factory (sqflite_common_ffi) when:
+      // - Pure Dart environment (sqflite not available)
+      // - Flutter app but sqflite not in user's dependencies
       return desktop_factory.getDatabaseFactory();
     }
   }

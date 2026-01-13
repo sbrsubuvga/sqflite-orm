@@ -23,19 +23,19 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.14
+  sqflite_orm: ^0.1.16
 ```
 
 ### Platform-Specific Setup
 
-#### For Flutter Mobile Apps (Android/iOS) - Recommended
+#### For Flutter Mobile Apps (Android/iOS) - Optional sqflite
 
-For Flutter apps targeting mobile platforms, add `sqflite` for native performance:
+For Flutter apps targeting mobile platforms, you can optionally add `sqflite` for native performance:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.14
-  sqflite: ^2.4.2  # Recommended for Android/iOS (native plugin)
+  sqflite_orm: ^0.1.16
+  sqflite: ^2.4.2  # Optional: Recommended for Android/iOS (native plugin)
 ```
 
 **Why add `sqflite`?**
@@ -43,13 +43,13 @@ dependencies:
 - Optimized for Android/iOS platforms
 - The package will automatically use it when available
 
-#### For Pure Dart Packages or Without sqflite
+#### Without sqflite (Default)
 
 You can use `sqflite_orm` without `sqflite` - it will automatically use `sqflite_common_ffi`:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.14
+  sqflite_orm: ^0.1.16
   # No sqflite needed - works with sqflite_common_ffi on all platforms
 ```
 
@@ -96,7 +96,7 @@ dependencies:
 
 This design allows:
 - ✅ Pure Dart packages to use the ORM without Flutter
-- ✅ Flutter apps to get native performance on mobile
+- ✅ Flutter apps to get native performance on mobile (if sqflite is added)
 - ✅ Desktop apps to work out of the box
 - ✅ CI/CD pipelines to run tests without Flutter SDK
 - ✅ `dart pub` analysis to pass (no Flutter-only dependencies)
@@ -175,7 +175,7 @@ final db = await DatabaseManager.initialize(
 ```
 
 **Note**: Platform detection and SQLite initialization are handled automatically. The package will:
-- Use `sqflite` on mobile if available (Flutter apps)
+- Use `sqflite` on mobile if available (Flutter apps with sqflite in dependencies)
 - Use `sqflite_common_ffi` on desktop or as fallback (works everywhere)
 - No manual setup needed!
 
@@ -528,7 +528,7 @@ dart run example/example.dart
 
 The package includes comprehensive unit tests (39 tests covering core functionality).
 
-**All tests use `flutter test`** - this is required because the package depends on Flutter SDK packages (sqflite).
+**All tests use `flutter test`** - this is required because the package uses Flutter test framework.
 
 ### Quick Start
 

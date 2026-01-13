@@ -72,7 +72,8 @@ class DatabaseManager {
   });
 
   /// Get the appropriate database factory for the current platform
-  /// - All platforms: uses sqflite_common_ffi (FFI)
+  /// - Mobile (Android/iOS): uses sqflite if available, otherwise sqflite_common_ffi
+  /// - Desktop (Windows/Linux/macOS): uses sqflite_common_ffi (FFI)
   static DatabaseFactory _getDatabaseFactory() {
     if (_databaseFactory != null) {
       return _databaseFactory!;
@@ -282,7 +283,8 @@ class DatabaseManager {
     final dbPath = await _getDatabasePath(path);
 
     // Open database using the appropriate factory
-    // All platforms: uses sqflite_common_ffi (FFI)
+    // Mobile: uses sqflite if available (native plugin), otherwise sqflite_common_ffi
+    // Desktop: uses sqflite_common_ffi (FFI)
     _database = await factory.openDatabase(
       dbPath,
       options: OpenDatabaseOptions(
