@@ -527,10 +527,10 @@ packages:
     dependency: "direct dev"
     description:
       name: sqflite_dev
-      sha256: "0ff948fb79baf5d6e84fc2d6157dc264679d8e1538b0e1746a3dc5d79e08d9be"
+      sha256: b1c5b70069e99fd87b78196924bdc7b62166d0ba8696a7fd313a68367aad60d5
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.5"
+    version: "1.0.6"
   sqflite_platform_interface:
     dependency: transitive
     description:
