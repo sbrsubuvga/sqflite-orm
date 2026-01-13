@@ -1,5 +1,4 @@
 import 'package:sqflite_orm/sqflite_orm.dart';
-import 'package:sqflite_common/sqlite_api.dart' show Transaction;
 
 // ============================================
 // MODEL DEFINITIONS
