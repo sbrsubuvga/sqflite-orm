@@ -18,10 +18,7 @@ void main() {
       path: 'test.db',
       version: 1,
       models: [User, Post],
-      instanceCreators: {
-        User: () => User(),
-        Post: () => Post(),
-      },
+      instanceCreators: {User: () => User(), Post: () => Post()},
       webDebug: false,
     );
 
