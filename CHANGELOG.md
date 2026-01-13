@@ -1,18 +1,21 @@
 ## 0.1.14
 
 * Improved conditional import architecture for cross-platform support
-  - Fixed conditional imports to properly handle `sqflite` without requiring it as a direct dependency
-  - Pure Dart packages can now use the ORM without Flutter SDK
+  - Added `sqflite` to dependencies (required for pub publish validation)
+  - Package still works without requiring users to add `sqflite` - uses conditional imports
+  - Pure Dart packages can use the ORM without Flutter SDK (automatically uses `sqflite_common_ffi`)
   - `sqflite_common_ffi` now works on all platforms including Android/iOS (via FFI)
   - Better fallback mechanism: Flutter apps without `sqflite` automatically use `sqflite_common_ffi`
   - Updated documentation to clarify platform support and architecture
   - Added architecture section in README explaining conditional import pattern
+  - Fixed pub publish validation errors
 
 * Documentation improvements
-  - Clarified that `sqflite` is optional but recommended for Flutter mobile apps
+  - Clarified that `sqflite` is included in package dependencies but optional for users
   - Documented that `sqflite_common_ffi` works on all platforms (not just desktop)
   - Added platform selection logic diagram
   - Updated installation instructions with platform-specific setup guides
+  - Updated README to reflect current dependency structure
 
 ## 0.1.13
 
