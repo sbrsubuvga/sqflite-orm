@@ -438,6 +438,33 @@ Run the example:
 dart run example/example.dart
 ```
 
+## Running Tests
+
+The package includes comprehensive unit tests (39 tests covering core functionality).
+
+**All tests use `flutter test`** - this is required because the package depends on Flutter SDK packages (sqflite).
+
+### Quick Start
+
+```bash
+# Run all tests
+flutter test
+```
+
+### Running Specific Tests
+
+```bash
+# Run a specific test file
+flutter test test/where_clause_test.dart
+```
+
+### Why `flutter test` instead of `dart test`?
+
+This package requires Flutter SDK dependencies (sqflite), so **always use `flutter test`**. The `dart test` command will fail because the Flutter SDK's Dart doesn't include the non-AOT frontend_server snapshot required by the test runner.
+
+**Always use:**
+- ✅ `flutter test` (required for Flutter SDK dependencies)
+
 ## Real-World Examples
 
 ### Finzo - Income & Expense Management App
