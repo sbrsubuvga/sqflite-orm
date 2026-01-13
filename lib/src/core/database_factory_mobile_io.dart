@@ -5,7 +5,8 @@ import 'package:sqflite_common/sqlite_api.dart' show DatabaseFactory;
 // Pure Dart packages will never reach this code path
 // If sqflite is not available in Flutter app, use the stub which will throw
 import 'database_factory_mobile_sqflite_stub.dart'
-    if (dart.library.ui) 'database_factory_mobile_sqflite.dart' as sqflite_factory;
+    if (dart.library.ui) 'database_factory_mobile_sqflite.dart'
+    as sqflite_factory;
 
 /// Get database factory for mobile platforms (Android/iOS)
 ///

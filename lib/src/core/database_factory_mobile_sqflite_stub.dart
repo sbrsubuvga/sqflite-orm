@@ -9,10 +9,8 @@ import 'package:sqflite_common/sqlite_api.dart' show DatabaseFactory;
 /// **Note:** Pure Dart packages will never use this stub - they use sqflite_common_ffi
 /// directly for all platforms since sqflite requires Flutter SDK.
 DatabaseFactory getDatabaseFactory() {
-  throw UnsupportedError(
-      'sqflite is not available in this Flutter app. '
+  throw UnsupportedError('sqflite is not available in this Flutter app. '
       'Add "sqflite: ^2.4.2" to your Flutter app\'s dependencies for native mobile support. '
       'Alternatively, the package will automatically fall back to sqflite_common_ffi '
       '(which works on Android/iOS via FFI, though sqflite is recommended for mobile).');
 }
-

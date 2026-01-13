@@ -27,4 +27,3 @@ DatabaseFactory getDatabaseFactory() {
   // sqflite exports databaseFactory which is compatible with sqflite_common
   return sqflite.databaseFactory;
 }
-
