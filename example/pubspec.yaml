@@ -9,4 +9,5 @@ environment:
 dependencies:
   sqflite_orm:
     path: ../
+  sqflite_common: ^2.5.6
 

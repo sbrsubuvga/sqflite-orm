@@ -33,3 +33,6 @@ export 'src/relationships/association_loader.dart';
 
 // Transactions
 export 'src/transactions/transaction_manager.dart';
+
+// Re-export common types for convenience
+export 'package:sqflite_common/sqlite_api.dart' show Transaction, Database;
