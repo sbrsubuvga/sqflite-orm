@@ -16,33 +16,26 @@ import 'database_factory_desktop_stub.dart'
 ///
 /// **Platform Selection:**
 /// - **Desktop (Windows/Linux/macOS)**: Always uses `sqflite_common_ffi` (works in Flutter and pure Dart)
-/// - **Mobile (Android/iOS) in Flutter apps**:
-///   - Prefers `sqflite` if available (native plugin, better performance)
-///   - Falls back to `sqflite_common_ffi` if `sqflite` not available (FFI works on mobile too)
-/// - **Mobile (Android/iOS) in pure Dart**: Always uses `sqflite_common_ffi` (sqflite is Flutter-only)
+/// - **Mobile (Android/iOS)**: Always uses `sqflite_common_ffi` (FFI works on mobile too)
 ///
 /// **Important Notes:**
 /// - `sqflite_common_ffi` works on ALL platforms including Android/iOS (uses FFI)
-/// - Pure Dart packages can NEVER use `sqflite` (it requires Flutter SDK)
-/// - Flutter apps can use either `sqflite` (recommended for mobile) or `sqflite_common_ffi` (fallback)
+/// - Pure Dart packages always use `sqflite_common_ffi` for all platforms
+/// - Flutter apps always use `sqflite_common_ffi` (sqflite is no longer supported)
 DatabaseFactory getDatabaseFactory() {
   // For desktop platforms, always use FFI (works in both Flutter and pure Dart)
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     return desktop_factory.getDatabaseFactory();
   }
 
-  // For mobile platforms:
-  // - In Flutter apps: try to use sqflite (if user added it), fallback to sqflite_common_ffi
-  // - In pure Dart: always use sqflite_common_ffi (sqflite is not available)
+  // For mobile platforms: always use sqflite_common_ffi (sqflite no longer supported)
   if (Platform.isAndroid || Platform.isIOS) {
-    // Check if we're in Flutter (dart.library.ui available)
-    // If not, we're in pure Dart and must use sqflite_common_ffi
+    // Always fallback to desktop factory (sqflite_common_ffi)
+    // sqflite is no longer supported in this package
     try {
       return mobile_factory.getDatabaseFactory();
     } catch (e) {
-      // Fallback to desktop factory (sqflite_common_ffi) when:
-      // - Pure Dart environment (sqflite not available)
-      // - Flutter app but sqflite not in user's dependencies
+      // Fallback to desktop factory (sqflite_common_ffi)
       return desktop_factory.getDatabaseFactory();
     }
   }
