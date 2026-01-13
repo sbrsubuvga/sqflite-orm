@@ -59,12 +59,11 @@ dependencies:
 - **Mobile (Android/iOS) in pure Dart**: Always uses `sqflite_common_ffi` (works via FFI)
 - **Pure Dart packages**: Always uses `sqflite_common_ffi` for all platforms
 
-**Note:** `sqflite` is **not** included as a direct dependency in `sqflite_orm` to:
-- Allow the package to work with pure Dart (no Flutter SDK required)
-- Pass `dart pub` analysis (sqflite requires Flutter SDK)
-- Give users flexibility to choose their SQLite implementation
-
-The package uses **conditional imports** to automatically detect and use the best available implementation.
+**Note:** `sqflite` is included as a dependency in `sqflite_orm` (required for pub publish validation), but the package uses **conditional imports** to automatically detect and use the best available implementation. This means:
+- ✅ The package works with pure Dart (no Flutter SDK required) - falls back to `sqflite_common_ffi`
+- ✅ Users don't need to add `sqflite` to their dependencies - it's optional
+- ✅ The package automatically uses `sqflite` when available in Flutter apps, or falls back to `sqflite_common_ffi`
+- ✅ Pure Dart packages always use `sqflite_common_ffi` (works everywhere via FFI)
 
 ## Architecture & Platform Support
 
