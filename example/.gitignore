@@ -1,30 +1,4 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
-
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
-.idea/
-
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
 # Dart/Pub related
-**/doc/api/
 .dart_tool/
 .pub-cache/
 .pub/
@@ -36,8 +10,10 @@ migrate_working_dir/
 *.db-shm
 *.db-wal
 
-# Symbolication related
-app.*.symbols
+# IDE
+.idea/
+*.iml
 
-# Obfuscation related
-app.*.map.json
+# OS
+.DS_Store
+

@@ -151,7 +151,6 @@ class DatabaseManager {
           port: webDebugPort,
         );
       } catch (e) {
-        print('⚠️  Failed to start Web UI: $e');
         // Don't fail initialization if Web UI fails to start
       }
     }
@@ -175,8 +174,6 @@ class DatabaseManager {
         // models must have a default constructor
         final instance = _createModelInstance(modelType);
         if (instance == null) {
-          print(
-              'Warning: Could not auto-register $modelType - ensure it has a default constructor');
           continue;
         }
 
@@ -211,7 +208,7 @@ class DatabaseManager {
 
         registry.register(modelType, modelInfo);
       } catch (e) {
-        print('Warning: Failed to auto-register $modelType: $e');
+        // Failed to auto-register model
       }
     }
   }
@@ -290,7 +287,6 @@ class DatabaseManager {
         onCreate: (db, version) async {
           // Database is being created for the first time
           // Create all tables for all models
-          print('Creating new database (version $version)');
           await _migrationManager.createTables(db, models);
           if (onCreate != null) {
             onCreate!(db, version);
@@ -299,7 +295,6 @@ class DatabaseManager {
         onUpgrade: (db, oldVersion, newVersion) async {
           // Database exists with old version, upgrade to new version
           // This handles: creating new tables, adding columns to existing tables
-          print('Upgrading database from version $oldVersion to $newVersion');
           await _migrationManager.upgradeDatabase(
             db,
             oldVersion,
@@ -317,7 +312,6 @@ class DatabaseManager {
     try {
       await _schemaValidator.validate(_database!, models);
     } catch (e) {
-      print('Schema validation warning: $e');
       // Continue even if validation fails - models might not be registered yet
     }
   }

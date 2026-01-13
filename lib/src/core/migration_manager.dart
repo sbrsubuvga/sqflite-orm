@@ -33,8 +33,6 @@ class MigrationManager {
     for (final modelType in models) {
       final info = ModelRegistry().getInfo(modelType);
       if (info == null) {
-        print(
-            'Warning: Model $modelType not registered, skipping table creation');
         continue;
       }
 
@@ -93,8 +91,6 @@ class MigrationManager {
         // Table already exists, that's fine
         return;
       }
-      print('Error creating table ${info.tableName}: $e');
-      print('SQL: $sql');
       rethrow;
     }
   }
@@ -145,13 +141,10 @@ class MigrationManager {
     List<Type> models,
   ) async {
     if (oldVersion < newVersion) {
-      print('Upgrading database from version $oldVersion to $newVersion');
-
       // Process all models to ensure tables exist and have correct schema
       for (final modelType in models) {
         final info = ModelRegistry().getInfo(modelType);
         if (info == null) {
-          print('Warning: Model $modelType not registered, skipping');
           continue;
         }
 
@@ -162,24 +155,20 @@ class MigrationManager {
           if (!tableExists) {
             // Table doesn't exist - create it (new table in this version)
             await _createTable(db, info);
-            print('✓ Created table ${info.tableName} during migration');
           } else {
             // Table exists - add missing columns (schema update)
             await _addMissingColumns(db, info);
           }
         } catch (e) {
-          print('Error processing table ${info.tableName}: $e');
           // Try to create table anyway if there was an error
           try {
             await _createTable(db, info);
-            print('✓ Created table ${info.tableName} after error recovery');
           } catch (createError) {
-            print('✗ Failed to create table ${info.tableName}: $createError');
+            // Failed to create table
+            rethrow;
           }
         }
       }
-
-      print('✓ Migration from version $oldVersion to $newVersion completed');
     }
   }
 
@@ -206,17 +195,13 @@ class MigrationManager {
             await db.execute(
               'ALTER TABLE ${info.tableName} ADD COLUMN $columnDef',
             );
-            print('Added column ${info.tableName}.$columnName');
           } catch (e) {
             // Ignore duplicate column errors
-            if (!e.toString().contains('duplicate column')) {
-              print('Error adding column ${info.tableName}.$columnName: $e');
-            }
           }
         }
       }
     } catch (e) {
-      print('Error adding columns to ${info.tableName}: $e');
+      // Error adding columns
     }
   }
 
@@ -239,7 +224,6 @@ class MigrationManager {
       return exists;
     } catch (e) {
       // If query fails, assume table doesn't exist
-      print('Warning: Error checking table existence for $tableName: $e');
       return false;
     }
   }

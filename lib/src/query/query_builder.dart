@@ -598,11 +598,6 @@ class QueryBuilder<T extends BaseModel> {
     if (_whereClause != null && _whereClause!.conditions.isNotEmpty) {
       query += ' ${_whereClause!.build()}';
       args.addAll(_whereClause!.args);
-    } else {
-      // Warn if no WHERE clause - updating all records
-      // In production, you might want to throw an error instead
-      print(
-          'Warning: updateValues() called without WHERE clause - will update all records');
     }
 
     return await _db.rawUpdate(query, args);

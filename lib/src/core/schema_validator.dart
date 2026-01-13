@@ -28,7 +28,6 @@ class SchemaValidator {
     for (final modelType in models) {
       final info = ModelRegistry().getInfo(modelType);
       if (info == null) {
-        print('Warning: Model $modelType not registered in ModelRegistry');
         continue;
       }
 
@@ -60,10 +59,7 @@ class SchemaValidator {
       // Check for extra columns (warn only)
       for (final dbColumnName in dbColumns.keys) {
         if (!info.columns.containsKey(dbColumnName)) {
-          print(
-            'Warning: Extra column found in database: '
-            '${info.tableName}.$dbColumnName (not in model definition)',
-          );
+          // Extra column found in database
         }
       }
 
@@ -76,10 +72,7 @@ class SchemaValidator {
         if (dbColumn != null) {
           final dbType = dbColumn['type'] as String?;
           if (dbType != null && !_typesCompatible(dbType, columnInfo.sqlType)) {
-            print(
-              'Warning: Type mismatch for ${info.tableName}.$columnName: '
-              'DB has $dbType, model expects ${columnInfo.sqlType}',
-            );
+            // Type mismatch detected
           }
         }
       }
@@ -88,7 +81,6 @@ class SchemaValidator {
         rethrow;
       }
       // Table might not exist yet, which is OK during initial creation
-      print('Schema validation note: ${info.tableName} - $e');
     }
   }
 
