@@ -1,3 +1,22 @@
+## 0.1.17
+
+* Major changes
+  - Added `sqflite` as a regular dependency (no longer optional)
+  - Simplified code structure by removing conditional import complexity
+  - Package now requires Flutter SDK (no longer supports pure Dart)
+  - Fixed all `pub publish` validation errors
+
+* Example improvements
+  - Converted example to a proper Flutter app with Material UI
+  - Added interactive UI demonstrating CRUD operations
+  - Added tabs for Users and Posts
+  - Added buttons for creating users/posts and testing eager loading
+
+* Code improvements
+  - Removed unused stub files and conditional import files
+  - Simplified database factory selection logic
+  - Updated all documentation to reflect new dependency structure
+
 ## 0.1.16
 
 * Publishing improvements
