@@ -26,6 +26,12 @@
 /// }
 /// ```
 abstract class BaseModel {
+  /// Create a base model instance.
+  ///
+  /// This is an abstract class and cannot be instantiated directly.
+  /// All model classes must extend this class and implement the required methods.
+  BaseModel();
+
   /// Internal storage for loaded relationships.
   ///
   /// This is used by the ORM to store eagerly loaded associations.

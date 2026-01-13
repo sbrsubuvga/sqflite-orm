@@ -14,6 +14,12 @@ import 'package:sqflite_orm/src/models/model_registry.dart';
 /// await manager.upgradeDatabase(db, 1, 2, [User, Post, Comment]);
 /// ```
 class MigrationManager {
+  /// Create a migration manager instance.
+  ///
+  /// Used internally by [DatabaseManager] to handle database schema
+  /// creation and migrations.
+  MigrationManager();
+
   /// Create all tables for registered models.
   ///
   /// Creates database tables for all models in the provided list.

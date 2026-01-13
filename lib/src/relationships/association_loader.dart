@@ -15,6 +15,12 @@ import 'package:sqflite_orm/src/models/base_model.dart';
 /// final author = posts[0].getRelation<User>('author');
 /// ```
 class AssociationLoader {
+  /// Create an association loader instance.
+  ///
+  /// Used internally by [QueryBuilder] to load relationships when using
+  /// the `include()` or `withRelations()` methods.
+  AssociationLoader();
+
   /// Load relationships for a list of models.
   ///
   /// Eagerly loads the specified relationships for all models in the list.
