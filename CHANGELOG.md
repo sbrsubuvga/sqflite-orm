@@ -1,3 +1,16 @@
+## 0.1.10
+
+* Updated dev dependencies to latest versions for better pub.dev scoring
+  - Updated flutter_lints from ^3.0.2 to ^6.0.0
+  - Updated build_runner from ^2.4.13 to ^2.10.4
+  - Updated source_gen from ^1.5.0 to ^4.1.1
+  - Updated test from ^1.26.3 to ^1.29.0
+* Fixed static analysis issues
+  - Fixed library directive to use modern Dart syntax
+  - Fixed HTML in doc comments (wrapped generic types in backticks)
+* All code now passes `dart analyze` with no issues
+* Improved pub.dev package scoring for "Support up-to-date dependencies" and "Pass static analysis"
+
 ## 0.1.9
 
 * Enhanced dartdoc documentation for public API properties and constructors
