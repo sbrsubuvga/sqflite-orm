@@ -516,7 +516,7 @@ packages:
     source: hosted
     version: "2.4.2"
   sqflite_dev:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: sqflite_dev
       sha256: "0ff948fb79baf5d6e84fc2d6157dc264679d8e1538b0e1746a3dc5d79e08d9be"
