@@ -119,7 +119,6 @@ class DatabaseManager {
     Database? Function(Database db, int version)? onCreate,
     bool webDebug = false,
     int webDebugPort = 4800,
-    String? webDebugPassword,
   }) async {
     // Register instance creators if provided
     if (instanceCreators != null) {
@@ -152,9 +151,6 @@ class DatabaseManager {
           name: 'sqflite_orm',
           port: webDebugPort,
         );
-        if (webDebugPassword != null && webDebugPassword.isNotEmpty) {
-          print('⚠️  Note: sqflite_dev does not support password protection');
-        }
       } catch (e) {
         print('⚠️  Failed to start Web UI: $e');
         // Don't fail initialization if Web UI fails to start
