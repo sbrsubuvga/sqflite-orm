@@ -177,8 +177,10 @@ void main() async {
   // ============================================
   // DATABASE INITIALIZATION WITH MIGRATIONS
   // ============================================
-  // Note: FFI initialization for desktop platforms is handled automatically
-  // by the DatabaseManager when using sqflite_common_ffi
+  // Note: Platform detection and SQLite initialization are handled automatically.
+  // - Mobile (Android/iOS): Uses sqflite (native plugin, included in package)
+  // - Desktop (Windows/Linux/macOS): Uses sqflite_common_ffi (FFI-based)
+  // FFI initialization for desktop platforms is handled automatically by DatabaseManager
 
   // Version 1: Initial schema with basic User model
   // Version 2: Add phone and createdAt to User, add Post, Comment, Tag models
