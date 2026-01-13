@@ -1,3 +1,13 @@
+## 0.1.16
+
+* Publishing improvements
+  - Created `publish.sh` script to automate publishing without adding `sqflite` to dependencies
+  - Script temporarily adds `sqflite` for validation, then restores original state
+  - Maintains optimal pub.dev scoring while allowing successful package publishing
+
+* Bug fixes
+  - Removed accidental `sqflite` entry from dev_dependencies
+
 ## 0.1.15
 
 * Dependency updates
