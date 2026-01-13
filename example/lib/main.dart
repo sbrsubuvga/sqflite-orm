@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite_orm/sqflite_orm.dart' hide Table, Column;
-import 'package:sqflite_orm/sqflite_orm.dart' as orm show Table, Column, PrimaryKey;
+import 'package:sqflite_orm/sqflite_orm.dart'
+    as orm
+    show Table, Column, PrimaryKey;
 
 // ============================================
 // MODEL DEFINITIONS
@@ -102,16 +104,13 @@ class Post extends BaseModel {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize database
   final db = await DatabaseManager.initialize(
     path: 'example.db',
     version: 1,
     models: [User, Post],
-    instanceCreators: {
-      User: () => User(),
-      Post: () => Post(),
-    },
+    instanceCreators: {User: () => User(), Post: () => Post()},
     webDebug: true,
     webDebugPort: 4800,
   );
@@ -208,7 +207,7 @@ class _HomePageState extends State<HomePage> {
     try {
       final users = await widget.db.query<User>().findAll();
       final posts = await widget.db.query<Post>().findAll();
-      
+
       setState(() {
         _users = users;
         _posts = posts;
@@ -312,10 +311,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _queryWithInclude() async {
     try {
-      final posts = await widget.db
-          .query<Post>()
-          .include(['author'])
-          .findAll();
+      final posts = await widget.db.query<Post>().include(['author']).findAll();
 
       setState(() {
         _message = 'Loaded ${posts.length} posts with authors (eager loading)';
@@ -349,10 +345,7 @@ class _HomePageState extends State<HomePage> {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               color: Colors.blue.shade50,
-              child: Text(
-                _message,
-                style: const TextStyle(fontSize: 14),
-              ),
+              child: Text(_message, style: const TextStyle(fontSize: 14)),
             ),
 
           // Action buttons
@@ -409,17 +402,14 @@ class _HomePageState extends State<HomePage> {
                                         final user = _users[index];
                                         return ListTile(
                                           leading: CircleAvatar(
-                                            child: Text(
-                                              user.name?[0] ?? '?',
-                                            ),
+                                            child: Text(user.name?[0] ?? '?'),
                                           ),
                                           title: Text(user.name ?? 'Unknown'),
                                           subtitle: Text(user.email ?? ''),
                                           trailing: IconButton(
                                             icon: const Icon(Icons.delete),
-                                            onPressed: () => _deleteUser(
-                                              user.id!,
-                                            ),
+                                            onPressed: () =>
+                                                _deleteUser(user.id!),
                                           ),
                                         );
                                       },
@@ -444,9 +434,8 @@ class _HomePageState extends State<HomePage> {
                                             subtitle: Text(post.content ?? ''),
                                             trailing: IconButton(
                                               icon: const Icon(Icons.delete),
-                                              onPressed: () => _deletePost(
-                                                post.id!,
-                                              ),
+                                              onPressed: () =>
+                                                  _deletePost(post.id!),
                                             ),
                                           ),
                                         );
