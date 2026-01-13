@@ -5,26 +5,40 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite_orm/sqflite_orm.dart';
 
 import 'package:example/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('App loads and displays correctly', (WidgetTester tester) async {
+    // Create a mock database manager for testing
+    // In a real scenario, you might want to use a test database
+    final db = await DatabaseManager.initialize(
+      path: 'test.db',
+      version: 1,
+      models: [User, Post],
+      instanceCreators: {
+        User: () => User(),
+        Post: () => Post(),
+      },
+      webDebug: false,
+    );
+
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(db: db));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Wait for the app to initialize
+    await tester.pumpAndSettle();
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Verify that the app title is displayed
+    expect(find.text('SQLite ORM Example'), findsOneWidget);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that tabs are present
+    expect(find.text('Users'), findsOneWidget);
+    expect(find.text('Posts'), findsOneWidget);
+
+    // Clean up
+    await db.close();
   });
 }
