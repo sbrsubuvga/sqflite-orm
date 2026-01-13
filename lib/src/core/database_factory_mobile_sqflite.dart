@@ -1,4 +1,4 @@
-// ignore_for_file: uri_does_not_exist
+// ignore_for_file: depend_on_referenced_packages, uri_does_not_exist
 // This file intentionally imports sqflite which is provided by users, not this package.
 // The import will work when users add sqflite to their app's dependencies.
 
