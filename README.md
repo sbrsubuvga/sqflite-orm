@@ -25,6 +25,18 @@ dependencies:
   sqflite_orm: ^0.1.12
 ```
 
+### For Flutter Mobile Apps (Android/iOS)
+
+If you're building a Flutter app for mobile platforms, also add `sqflite`:
+
+```yaml
+dependencies:
+  sqflite_orm: ^0.1.12
+  sqflite: ^2.4.2  # Required for Android/iOS support
+```
+
+**Note:** `sqflite` is not included as a direct dependency to allow the package to work with pure Dart. The package will automatically use `sqflite` when available (Flutter mobile) or fall back to `sqflite_common_ffi` for desktop platforms.
+
 ## Quick Start
 
 ### 1. Define Your Models

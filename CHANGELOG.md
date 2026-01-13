@@ -1,13 +1,18 @@
 ## 0.1.12
 
-* Fixed dependency configuration for pub.dev publishing
+* Fixed dependency configuration for pub.dev publishing and pub points
+  - Removed `sqflite` from dependencies to fix `dart pub` analysis issues
+  - `sqflite` now needs to be added by users for mobile (Android/iOS) support
+  - Package now passes `dart pub downgrade` and `dart pub upgrade` validation
+  - Fixed pub points score from 50 to full score
+* Fixed optional dependency handling
   - Moved `sqflite_dev` from `dependencies` to `dev_dependencies` (correct classification)
   - Made `sqflite_dev` optional using dynamic invocation pattern
   - Created `sqflite_dev_stub.dart` to handle cases where `sqflite_dev` is not available
   - Web debug UI feature now works gracefully whether or not `sqflite_dev` is in user's dependencies
-* Fixed all pub.dev validation issues
-  - Package now passes `dart pub publish --dry-run` validation
-  - All imports in `lib/` directory now use proper dependency declarations
+* Updated documentation
+  - Added clear instructions for Flutter mobile users to add `sqflite` dependency
+  - Package works on desktop without `sqflite`, falls back gracefully on mobile if not provided
 
 ## 0.1.11
 
