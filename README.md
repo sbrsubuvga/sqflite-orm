@@ -1,11 +1,11 @@
 # SQLite ORM
 
-A comprehensive Flutter/Dart SQLite ORM package with cross-platform support (desktop, Android, iOS), automatic migrations, relationship handling, query builder, and a web-based database management UI.
+A comprehensive Dart SQLite ORM package with cross-platform support (desktop, mobile, web), automatic migrations, relationship handling, query builder, and a web-based database management UI.
 
 ## Features
 
-- **Cross-Platform**: Works everywhere - Flutter (Android, iOS, Desktop) and pure Dart
-- **Smart Platform Detection**: Uses conditional imports to automatically select the best SQLite implementation
+- **Cross-Platform**: Works everywhere - pure Dart (no Flutter SDK required)
+- **FFI-Based**: Uses `sqflite_common_ffi` for all platforms (works via Foreign Function Interface)
 - **Type-Safe ORM**: Strong typing with Dart generics
 - **Simplified Registration**: Automatic column inference from models - no boilerplate needed
 - **Runtime Validation**: Schema mismatch detection at runtime
@@ -14,7 +14,7 @@ A comprehensive Flutter/Dart SQLite ORM package with cross-platform support (des
 - **Query Builder**: Fluent, type-safe query API with `findAll()`, `findOne()`, `findByPk()`
 - **CRUD Operations**: `create()`, `insert()`, `update()`, `delete()` methods
 - **Web UI**: Full-featured database management interface with pagination and table browser
-- **Web Debug Mode**: Automatically start Web UI during development (works in both Flutter and pure Dart)
+- **Web Debug Mode**: Automatically start Web UI during development
 - **Transactions**: Full transaction support with rollback
 
 ## Installation
@@ -23,25 +23,30 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.17
+  sqflite_orm: ^0.1.18
 ```
 
 ### Platform Support
 
-`sqflite_orm` automatically selects the best SQLite implementation for each platform:
+`sqflite_orm` uses `sqflite_common_ffi` for all platforms, which works everywhere via FFI:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.17
-  # sqflite is included in the package - no need to add it separately
+  sqflite_orm: ^0.1.18
+  # No additional dependencies needed - works on all platforms
 ```
 
 **How it works:**
-- **Desktop (Windows/Linux/macOS)**: Uses `sqflite_common_ffi` (FFI-based, works in Flutter and pure Dart)
-- **Mobile (Android/iOS) in Flutter**: Uses `sqflite` (native plugin, better performance)
-- **Mobile (Android/iOS) in pure Dart**: Uses `sqflite_common_ffi` (sqflite requires Flutter SDK)
+- **All platforms (Desktop, Mobile, Web)**: Uses `sqflite_common_ffi` (FFI-based)
+- **Desktop (Windows/Linux/macOS)**: Uses `sqflite_common_ffi` (FFI-based)
+- **Mobile (Android/iOS)**: Uses `sqflite_common_ffi` (FFI works on mobile too)
+- **Pure Dart packages**: Always uses `sqflite_common_ffi` for all platforms
 
-**Note:** The package includes `sqflite` as a dependency for Flutter apps, providing native mobile performance on Android/iOS. For desktop platforms and pure Dart packages, it automatically uses `sqflite_common_ffi` which works everywhere via FFI.
+**Note:** This is a pure Dart package - no Flutter SDK required. The package uses `sqflite_common_ffi` which works on all platforms via FFI (Foreign Function Interface). This means:
+- ✅ Works with pure Dart (no Flutter SDK required)
+- ✅ Works on all platforms: Desktop, Mobile, and Web
+- ✅ No platform-specific setup needed
+- ✅ Consistent behavior across all platforms
 
 ## Architecture & Platform Support
 
@@ -79,11 +84,10 @@ This design allows:
 - ✅ CI/CD pipelines to run tests without Flutter SDK
 - ✅ `dart pub` analysis to pass (no Flutter-only dependencies)
 
-### SQLite Implementations
+### SQLite Implementation
 
 | Implementation | Platforms | Requires Flutter | Performance |
 |---------------|-----------|------------------|-------------|
-| `sqflite` | Android, iOS | ✅ Yes | ⭐⭐⭐⭐⭐ Native |
 | `sqflite_common_ffi` | All (Desktop, Mobile, Web) | ❌ No | ⭐⭐⭐⭐ FFI |
 
 ## Quick Start
@@ -152,10 +156,10 @@ final db = await DatabaseManager.initialize(
 );
 ```
 
-**Note**: Platform detection and SQLite initialization are handled automatically. The package will:
-- Use `sqflite` on mobile (Android/iOS) in Flutter apps (native plugin, included in package)
-- Use `sqflite_common_ffi` on desktop (Windows/Linux/macOS) or in pure Dart (works everywhere)
+**Note**: Platform detection and SQLite initialization are handled automatically. The package uses `sqflite_common_ffi` for all platforms:
+- Works on Desktop, Mobile, and Web
 - No manual setup needed!
+- Consistent behavior across all platforms
 
 ### 3. CRUD Operations
 
@@ -498,50 +502,35 @@ See `example/example.dart` for a comprehensive example including:
 
 Run the example:
 
-**Note:** Since the package includes `sqflite` (which requires Flutter), you need to run the example with Flutter:
-
 ```bash
 cd example
-
-# For desktop (macOS/Windows/Linux)
-flutter run -d macos
-# or
-flutter run -d windows
-# or  
-flutter run -d linux
-
-# For mobile (Android/iOS)
-flutter run -d android
-# or
-flutter run -d ios
+dart run example.dart
 ```
+
+The example will:
+- Create a database
+- Create sample users and posts
+- Demonstrate CRUD operations
+- Show eager loading with `include()`
+- Start a Web UI at http://localhost:4800
 
 ## Running Tests
 
-The package includes comprehensive unit tests (39 tests covering core functionality).
-
-**All tests use `flutter test`** - this is required because the package uses Flutter test framework.
+The package includes comprehensive unit tests covering core functionality.
 
 ### Quick Start
 
 ```bash
 # Run all tests
-flutter test
+dart test
 ```
 
 ### Running Specific Tests
 
 ```bash
 # Run a specific test file
-flutter test test/where_clause_test.dart
+dart test test/where_clause_test.dart
 ```
-
-### Why `flutter test` instead of `dart test`?
-
-The package tests use Flutter test framework. While `sqflite_orm` itself works with pure Dart, the test suite uses Flutter testing utilities.
-
-**Always use:**
-- ✅ `flutter test` (for running tests)
 
 ## Real-World Examples
 

@@ -1,21 +1,36 @@
+## 0.1.18
+
+* Example cleanup
+  - Removed Flutter-specific files from example directory (`.flutter-plugins-dependencies`, `.metadata`)
+  - Updated `.gitignore` to be Dart-only (removed Flutter-specific entries)
+  - Cleaned up example directory structure
+  - Verified example code has no unused imports or code
+
 ## 0.1.17
 
-* Major changes
-  - Added `sqflite` as a regular dependency (no longer optional)
-  - Simplified code structure by removing conditional import complexity
-  - Package now requires Flutter SDK (no longer supports pure Dart)
-  - Fixed all `pub publish` validation errors
+* Major changes - Converted to pure Dart package
+  - Removed all Flutter dependencies (no Flutter SDK required)
+  - Removed `sqflite` support completely (Flutter-only package)
+  - Simplified to use only `sqflite_common_ffi` for all platforms
+  - Removed conditional imports for mobile/Flutter
+  - Updated to use `lints` instead of `flutter_lints`
+  - Removed platform-specific code paths
 
 * Example improvements
-  - Converted example to a proper Flutter app with Material UI
-  - Added interactive UI demonstrating CRUD operations
-  - Added tabs for Users and Posts
-  - Added buttons for creating users/posts and testing eager loading
+  - Converted example to a pure Dart script (example.dart)
+  - Removed Flutter app example
+  - Simplified example to demonstrate core ORM functionality
 
 * Code improvements
-  - Removed unused stub files and conditional import files
-  - Simplified database factory selection logic
-  - Updated all documentation to reflect new dependency structure
+  - Simplified database factory to always use `sqflite_common_ffi`
+  - Removed all Flutter-specific files and conditional imports
+  - Updated all documentation to reflect pure Dart nature
+
+* Benefits
+  - ✅ Works with pure Dart (no Flutter SDK required)
+  - ✅ Consistent behavior across all platforms
+  - ✅ No platform-specific setup needed
+  - ✅ Works on Desktop, Mobile, and Web via FFI
 
 ## 0.1.16
 
