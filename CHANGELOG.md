@@ -1,3 +1,13 @@
+## 0.1.11
+
+* Added constructor documentation for remaining public classes
+  - Added documentation for `AssociationLoader()` constructor
+  - Added documentation for `MigrationManager()` constructor
+  - Added documentation for `BaseModel()` constructor
+* Documentation coverage now at 94.3% (170 out of 175 API elements)
+* Package verified to score 160/160 points using pana analysis tool
+* All public APIs now fully documented
+
 ## 0.1.10
 
 * Updated dev dependencies to latest versions for better pub.dev scoring
