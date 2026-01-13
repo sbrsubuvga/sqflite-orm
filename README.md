@@ -498,8 +498,22 @@ See `example/example.dart` for a comprehensive example including:
 
 Run the example:
 
+**Note:** Since the package includes `sqflite` (which requires Flutter), you need to run the example with Flutter:
+
 ```bash
-dart run example/example.dart
+cd example
+
+# For desktop (macOS/Windows/Linux)
+flutter run -d macos
+# or
+flutter run -d windows
+# or  
+flutter run -d linux
+
+# For mobile (Android/iOS)
+flutter run -d android
+# or
+flutter run -d ios
 ```
 
 ## Running Tests
