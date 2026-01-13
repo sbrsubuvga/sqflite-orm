@@ -31,6 +31,12 @@ class Column {
   /// If `true`, this field will not be included in database operations.
   final bool ignore;
 
+  /// Create a column annotation.
+  ///
+  /// [name] is the column name (defaults to field name if null).
+  /// [nullable] defaults to `true`.
+  /// [defaultValue] is an optional default value (SQL expression or literal).
+  /// [ignore] defaults to `false`.
   const Column({
     this.name,
     this.nullable = true,

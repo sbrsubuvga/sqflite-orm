@@ -6,7 +6,31 @@ import 'package:sqflite_orm/src/models/model_registry.dart';
 /// This is a manual registration system. For automatic registration
 /// from annotations, use code generation (build_runner + source_gen).
 class SimpleModelRegistrar {
-  /// Register a model with manual specification
+  /// Register a model with manual specification.
+  ///
+  /// Manually registers a model type with the [ModelRegistry].
+  /// This is useful when you can't use automatic registration or code generation.
+  ///
+  /// [tableName] is the database table name.
+  /// [columns] is a map of column names to column metadata.
+  /// [primaryKey] is the primary key column name (optional).
+  /// [foreignKeys] is a map of foreign key metadata (optional).
+  /// [relationships] is a map of relationship metadata (optional).
+  /// [factory] is a factory function to create instances from database rows (optional).
+  /// [instanceCreator] is a function to create new instances (optional, used with fromMap).
+  ///
+  /// Example:
+  /// ```dart
+  /// SimpleModelRegistrar.register<User>(
+  ///   tableName: 'users',
+  ///   columns: {
+  ///     'id': ColumnInfo(name: 'id', sqlType: 'INTEGER', isPrimaryKey: true),
+  ///     'name': ColumnInfo(name: 'name', sqlType: 'TEXT'),
+  ///   },
+  ///   primaryKey: 'id',
+  ///   instanceCreator: () => User(),
+  /// );
+  /// ```
   static void register<T extends BaseModel>({
     required String tableName,
     required Map<String, ColumnInfo> columns,
@@ -62,10 +86,16 @@ class SimpleModelRegistrar {
     };
   }
 
-  /// Simple registration - automatically infers columns from model
+  /// Simple registration - automatically infers columns from model.
   ///
   /// This method extracts table name and infers column information from the model.
   /// Column types are inferred from toMap() values with sensible defaults.
+  ///
+  /// [instanceCreator] is a function to create new model instances.
+  /// [columns] is optional - if not provided, columns are inferred from toMap().
+  /// [primaryKey] is the primary key column name (still required).
+  /// [foreignKeys] is a map of foreign key metadata (optional).
+  /// [relationships] is a map of relationship metadata (optional).
   ///
   /// Example:
   /// ```dart
@@ -98,8 +128,16 @@ class SimpleModelRegistrar {
     );
   }
 
-  /// Infer column information from model's toMap() method
-  /// Made public for use in auto-registration
+  /// Infer column information from model's toMap() method.
+  ///
+  /// Analyzes a model instance's toMap() output to automatically determine
+  /// column types, nullability, and other metadata.
+  /// Made public for use in auto-registration.
+  ///
+  /// [instance] is the model instance to analyze.
+  /// [primaryKey] is the primary key column name (if any).
+  ///
+  /// Returns a map of column names to column metadata.
   static Map<String, ColumnInfo> inferColumnsFromModel(
     BaseModel instance,
     String? primaryKey,
@@ -164,7 +202,26 @@ class SimpleModelRegistrar {
     return columns;
   }
 
-  /// Helper to create a ColumnInfo for common types
+  /// Helper to create a ColumnInfo for common types.
+  ///
+  /// Convenience method to create column metadata with sensible defaults.
+  ///
+  /// [name] is the column name.
+  /// [sqlType] is the SQL type (e.g., 'INTEGER', 'TEXT', 'REAL').
+  /// [nullable] defaults to `true`.
+  /// [defaultValue] is an optional default value.
+  /// [isPrimaryKey] defaults to `false`.
+  /// [autoIncrement] defaults to `false` (only valid for primary keys).
+  ///
+  /// Example:
+  /// ```dart
+  /// final idColumn = SimpleModelRegistrar.column(
+  ///   name: 'id',
+  ///   sqlType: 'INTEGER',
+  ///   isPrimaryKey: true,
+  ///   autoIncrement: true,
+  /// );
+  /// ```
   static ColumnInfo column({
     required String name,
     required String sqlType,

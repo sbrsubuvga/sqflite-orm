@@ -30,6 +30,8 @@ abstract class BaseModel {
   ///
   /// This is used by the ORM to store eagerly loaded associations.
   /// Public field to allow AssociationLoader to access it.
+  /// Access relationships via [getRelation] or [getRelationList] instead of
+  /// accessing this field directly.
   Map<String, dynamic>? relations;
 
   /// Convert model to map for database operations.

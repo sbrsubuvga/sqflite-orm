@@ -20,11 +20,33 @@ import 'package:sqflite_dev/sqflite_dev.dart';
 
 /// Main database manager for cross-platform SQLite operations
 class DatabaseManager {
+  /// The database file path.
+  ///
+  /// Can be a relative path (will be resolved based on platform)
+  /// or an absolute path.
   final String path;
+
+  /// The database schema version.
+  ///
+  /// Increment this number when you need to migrate the database schema.
   final int version;
+
+  /// List of model types to register with this database.
+  ///
+  /// Models must extend [BaseModel] and be registered in [ModelRegistry].
   final List<Type> models;
+
+  /// Optional callback called when the database version is upgraded.
+  ///
+  /// Called after automatic migrations are applied.
+  /// Use this for custom migration logic beyond what the ORM handles automatically.
   final Database? Function(Database db, int oldVersion, int newVersion)?
       onUpgrade;
+
+  /// Optional callback called when the database is first created.
+  ///
+  /// Called after all tables are created.
+  /// Use this for initial data seeding or custom setup.
   final Database? Function(Database db, int version)? onCreate;
 
   Database? _database;

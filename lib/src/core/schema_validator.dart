@@ -132,6 +132,8 @@ class SchemaValidationError implements Exception {
   final String message;
 
   /// Create a schema validation error.
+  ///
+  /// [message] describes what validation check failed.
   SchemaValidationError(this.message);
 
   @override

@@ -25,6 +25,12 @@ class ForeignKey {
   /// If `true`, updating the referenced record's key will update this record.
   final bool onUpdateCascade;
 
+  /// Create a foreign key annotation.
+  ///
+  /// [table] is the name of the referenced table.
+  /// [column] is the name of the referenced column (typically 'id').
+  /// [onDeleteCascade] defaults to `false`.
+  /// [onUpdateCascade] defaults to `false`.
   const ForeignKey({
     required this.table,
     required this.column,

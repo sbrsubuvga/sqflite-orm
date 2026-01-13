@@ -14,5 +14,8 @@ class PrimaryKey {
   /// Defaults to `true`. Set to `false` for manually assigned primary keys.
   final bool autoIncrement;
 
+  /// Create a primary key annotation.
+  ///
+  /// [autoIncrement] defaults to `true` for auto-incrementing primary keys.
   const PrimaryKey({this.autoIncrement = true});
 }

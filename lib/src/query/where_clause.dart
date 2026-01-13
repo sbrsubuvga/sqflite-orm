@@ -15,7 +15,16 @@
 ///   .findAll();
 /// ```
 class WhereClause {
+  /// Internal list of SQL condition strings.
+  ///
+  /// Each condition is a SQL fragment like "column = ?" or "column > ?".
+  /// This is used internally to build the WHERE clause.
   final List<String> conditions = [];
+
+  /// Internal list of argument values for the conditions.
+  ///
+  /// These values correspond to the placeholders (?) in the conditions.
+  /// This is used internally when executing queries.
   final List<dynamic> arguments = [];
 
   /// Add an equality condition.

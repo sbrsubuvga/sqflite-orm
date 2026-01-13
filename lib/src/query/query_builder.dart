@@ -32,13 +32,29 @@ class QueryBuilder<T extends BaseModel> {
   QueryBuilder(this._db, this._modelType)
       : _modelInfo = ModelRegistry().getInfo(_modelType);
 
-  /// Add a WHERE clause
+  /// Add a WHERE clause.
+  ///
+  /// Starts building a WHERE clause. Use [whereClause] with a [WhereClause]
+  /// builder for more complex queries.
+  ///
+  /// [column] is the column name to filter on.
+  ///
+  /// Note: This is a simplified API. For full functionality, use [whereClause]
+  /// with a [WhereClause] builder instead.
   QueryBuilder<T> where(String column) {
     _whereClause = WhereClause();
     return this;
   }
 
-  /// Add equality condition
+  /// Add equality condition.
+  ///
+  /// Adds an equality condition to the WHERE clause.
+  /// Must be called after [where].
+  ///
+  /// [value] is the value to compare against.
+  ///
+  /// Note: This is a simplified API. For full functionality, use [whereClause]
+  /// with a [WhereClause] builder instead.
   QueryBuilder<T> equals(dynamic value) {
     if (_whereClause == null) {
       throw StateError('Call where() first before using equals()');
@@ -47,7 +63,15 @@ class QueryBuilder<T extends BaseModel> {
     return this;
   }
 
-  /// Add greater than condition
+  /// Add greater than condition.
+  ///
+  /// Adds a greater than condition to the WHERE clause.
+  /// Must be called after [where].
+  ///
+  /// [value] is the value to compare against.
+  ///
+  /// Note: This is a simplified API. For full functionality, use [whereClause]
+  /// with a [WhereClause] builder instead.
   QueryBuilder<T> greaterThan(dynamic value) {
     if (_whereClause == null) {
       throw StateError('Call where() first before using greaterThan()');
@@ -55,7 +79,15 @@ class QueryBuilder<T extends BaseModel> {
     return this;
   }
 
-  /// Add less than condition
+  /// Add less than condition.
+  ///
+  /// Adds a less than condition to the WHERE clause.
+  /// Must be called after [where].
+  ///
+  /// [value] is the value to compare against.
+  ///
+  /// Note: This is a simplified API. For full functionality, use [whereClause]
+  /// with a [WhereClause] builder instead.
   QueryBuilder<T> lessThan(dynamic value) {
     if (_whereClause == null) {
       throw StateError('Call where() first before using lessThan()');

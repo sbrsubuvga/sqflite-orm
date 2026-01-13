@@ -13,5 +13,8 @@ class Table {
   /// The name of the table in the database.
   final String name;
 
+  /// Create a table annotation.
+  ///
+  /// [name] is the name of the table in the database.
   const Table({required this.name});
 }
