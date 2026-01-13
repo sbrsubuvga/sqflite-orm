@@ -22,7 +22,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.12
+  sqflite_orm: ^0.1.13
 ```
 
 ### For Flutter Mobile Apps (Android/iOS)
