@@ -105,9 +105,8 @@ void main() {
     });
 
     test('build returns correct WHERE clause', () {
-      final where = WhereClause()
-          .equals('status', 'active')
-          .greaterThan('age', 18);
+      final where =
+          WhereClause().equals('status', 'active').greaterThan('age', 18);
       final sql = where.build();
       expect(sql, contains('WHERE'));
       expect(sql, contains('status = ?'));
@@ -125,4 +124,3 @@ void main() {
     });
   });
 }
-

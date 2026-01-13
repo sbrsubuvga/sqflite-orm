@@ -1,7 +1,7 @@
 import 'package:sqflite_common/sqlite_api.dart' show Database;
 
 /// Helper function to enable workbench if sqflite_dev is available
-/// 
+///
 /// This function will attempt to enable the workbench feature.
 /// If sqflite_dev is not available (not in dependencies), it will silently do nothing.
 void enableWorkbenchIfAvailable(Database database, {String? name, int? port}) {
@@ -15,4 +15,3 @@ void enableWorkbenchIfAvailable(Database database, {String? name, int? port}) {
     // Users who want workbench should add sqflite_dev to their dependencies
   }
 }
-

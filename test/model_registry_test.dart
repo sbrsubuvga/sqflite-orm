@@ -10,10 +10,9 @@ class TestModel extends BaseModel {
   Map<String, dynamic> toMap() => {'id': id, 'name': name};
 
   @override
-  BaseModel fromMap(Map<String, dynamic> map) =>
-      TestModel()
-        ..id = map['id'] as int?
-        ..name = map['name'] as String?;
+  BaseModel fromMap(Map<String, dynamic> map) => TestModel()
+    ..id = map['id'] as int?
+    ..name = map['name'] as String?;
 
   @override
   String get tableName => 'test_models';
@@ -278,4 +277,3 @@ void main() {
     });
   });
 }
-
