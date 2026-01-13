@@ -23,7 +23,7 @@ Add to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.16
+  sqflite_orm: ^0.1.17
 ```
 
 ### Platform Support
@@ -32,7 +32,7 @@ dependencies:
 
 ```yaml
 dependencies:
-  sqflite_orm: ^0.1.16
+  sqflite_orm: ^0.1.17
   # sqflite is included in the package - no need to add it separately
 ```
 
