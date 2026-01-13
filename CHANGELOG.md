@@ -1,3 +1,12 @@
+## 0.1.8
+
+* Added comprehensive dartdoc documentation for all public APIs
+* Documented QueryResult, RelationshipManager, AssociationLoader, MigrationManager, SchemaValidator, ConnectionPool
+* Enhanced documentation for ModelInfo, ColumnInfo, ForeignKeyInfo, RelationshipInfo classes
+* Added detailed documentation for relationship annotations (OneToMany, ManyToOne, ManyToMany)
+* Increased documentation coverage from 673 to 984 comments (46% increase)
+* All code passes Flutter analysis with no errors, warnings, or lint issues
+
 ## 0.1.7
 
 * Updated sqflite_dev to ^1.0.5 (latest version)
