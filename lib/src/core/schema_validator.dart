@@ -1,9 +1,29 @@
 import 'package:sqflite_common/sqlite_api.dart' show Database;
 import 'package:sqflite_orm/src/models/model_registry.dart';
 
-/// Validates database schema against model definitions
+/// Validates database schema against model definitions.
+///
+/// Compares the actual database schema with the registered model definitions
+/// to detect mismatches, missing columns, or extra columns.
+///
+/// Example:
+/// ```dart
+/// final validator = SchemaValidator();
+/// await validator.validate(db, [User, Post, Comment]);
+/// ```
 class SchemaValidator {
-  /// Validate the database schema against registered models
+  /// Validate the database schema against registered models.
+  ///
+  /// Checks that:
+  /// - All model columns exist in the database
+  /// - Column types are compatible
+  /// - Warns about extra columns in the database
+  ///
+  /// [db] is the database connection.
+  /// [models] is the list of model types to validate.
+  ///
+  /// Throws [SchemaValidationError] if required columns are missing.
+  /// Prints warnings for type mismatches or extra columns.
   Future<void> validate(Database db, List<Type> models) async {
     for (final modelType in models) {
       final info = ModelRegistry().getInfo(modelType);
@@ -94,9 +114,24 @@ class SchemaValidator {
   }
 }
 
-/// Exception thrown when schema validation fails
+/// Exception thrown when schema validation fails.
+///
+/// This exception is thrown when the database schema doesn't match
+/// the model definitions, such as when required columns are missing.
+///
+/// Example:
+/// ```dart
+/// try {
+///   await validator.validate(db, [User]);
+/// } on SchemaValidationError catch (e) {
+///   print('Schema mismatch: ${e.message}');
+/// }
+/// ```
 class SchemaValidationError implements Exception {
+  /// Error message describing the validation failure.
   final String message;
+
+  /// Create a schema validation error.
   SchemaValidationError(this.message);
 
   @override

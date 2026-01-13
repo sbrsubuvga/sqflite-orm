@@ -1,9 +1,28 @@
 import 'package:sqflite_common/sqlite_api.dart' show Database;
 import 'package:sqflite_orm/src/models/model_registry.dart';
 
-/// Manages database migrations
+/// Manages database schema migrations.
+///
+/// Handles creating tables and upgrading database schema when the
+/// database version changes. Follows sqflite best practices for
+/// migrations.
+///
+/// Example:
+/// ```dart
+/// final manager = MigrationManager();
+/// await manager.createTables(db, [User, Post, Comment]);
+/// await manager.upgradeDatabase(db, 1, 2, [User, Post, Comment]);
+/// ```
 class MigrationManager {
-  /// Create all tables for registered models
+  /// Create all tables for registered models.
+  ///
+  /// Creates database tables for all models in the provided list.
+  /// Models must be registered in [ModelRegistry] before calling this method.
+  ///
+  /// Uses `CREATE TABLE IF NOT EXISTS` to safely create tables.
+  ///
+  /// [db] is the database connection.
+  /// [models] is the list of model types to create tables for.
   Future<void> createTables(Database db, List<Type> models) async {
     for (final modelType in models) {
       final info = ModelRegistry().getInfo(modelType);
@@ -17,10 +36,15 @@ class MigrationManager {
     }
   }
 
-  /// Create a table for a model
+  /// Create a table for a model.
   ///
-  /// Uses CREATE TABLE IF NOT EXISTS (sqflite best practice)
-  /// This is safe to call multiple times
+  /// Uses `CREATE TABLE IF NOT EXISTS` (sqflite best practice).
+  /// This is safe to call multiple times - it won't fail if the table already exists.
+  ///
+  /// [db] is the database connection.
+  /// [info] is the model metadata containing table and column information.
+  ///
+  /// Throws [ArgumentError] if the model has no columns.
   Future<void> _createTable(Database db, ModelInfo info) async {
     if (info.columns.isEmpty) {
       throw ArgumentError(
@@ -91,15 +115,23 @@ class MigrationManager {
     return buffer.toString();
   }
 
-  /// Upgrade database from old version to new version
+  /// Upgrade database from old version to new version.
   ///
+  /// Handles database schema migrations when the version number increases.
   /// Following sqflite best practices:
   /// - onCreate: Called when database is first created (creates all tables)
   /// - onUpgrade: Called when version increases (creates new tables, alters existing ones)
   ///
   /// This method ensures:
   /// 1. All tables exist (creates missing ones)
-  /// 2. Existing tables get new columns added
+  /// 2. Existing tables get new columns added (via ALTER TABLE)
+  ///
+  /// [db] is the database connection.
+  /// [oldVersion] is the current database version.
+  /// [newVersion] is the target database version.
+  /// [models] is the list of model types to process.
+  ///
+  /// Only processes migrations if [oldVersion] < [newVersion].
   Future<void> upgradeDatabase(
     Database db,
     int oldVersion,
@@ -182,9 +214,15 @@ class MigrationManager {
     }
   }
 
-  /// Check if a table exists
+  /// Check if a table exists in the database.
   ///
-  /// Uses sqlite_master to check table existence (sqflite best practice)
+  /// Uses `sqlite_master` to check table existence (sqflite best practice).
+  ///
+  /// [db] is the database connection.
+  /// [tableName] is the name of the table to check.
+  ///
+  /// Returns `true` if the table exists, `false` otherwise.
+  /// Returns `false` if the query fails (assumes table doesn't exist).
   Future<bool> _tableExists(Database db, String tableName) async {
     try {
       final result = await db.rawQuery(

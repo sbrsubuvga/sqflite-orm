@@ -2,9 +2,34 @@ import 'package:sqflite_common/sqlite_api.dart' show Database;
 import 'package:sqflite_orm/src/models/model_registry.dart';
 import 'package:sqflite_orm/src/models/base_model.dart';
 
-/// Handles loading of relationships (associations)
+/// Handles eager loading of relationships (associations) for models.
+///
+/// This class is used internally by [QueryBuilder] to load relationships
+/// when using the `include()` method. It supports OneToMany, ManyToOne,
+/// and ManyToMany relationship types.
+///
+/// Example:
+/// ```dart
+/// final loader = AssociationLoader();
+/// await loader.loadRelations(db, posts, ['author', 'comments'], postInfo);
+/// final author = posts[0].getRelation<User>('author');
+/// ```
 class AssociationLoader {
-  /// Load relationships for a list of models
+  /// Load relationships for a list of models.
+  ///
+  /// Eagerly loads the specified relationships for all models in the list.
+  /// The loaded relationships are stored in each model's internal relations map
+  /// and can be accessed via [BaseModel.getRelation].
+  ///
+  /// [db] is the database connection.
+  /// [models] is the list of models to load relationships for.
+  /// [relationNames] is the list of relationship names to load.
+  /// [modelInfo] is the model metadata containing relationship definitions.
+  ///
+  /// Supported relationship types:
+  /// - `ManyToOne`: Loads a single related record via foreign key
+  /// - `OneToMany`: Loads multiple related records via foreign key
+  /// - `ManyToMany`: Loads multiple related records via join table
   Future<void> loadRelations<T extends BaseModel>(
     Database db,
     List<T> models,
