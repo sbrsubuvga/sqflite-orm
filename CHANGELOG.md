@@ -1,3 +1,14 @@
+## 0.1.12
+
+* Fixed dependency configuration for pub.dev publishing
+  - Moved `sqflite_dev` from `dependencies` to `dev_dependencies` (correct classification)
+  - Made `sqflite_dev` optional using dynamic invocation pattern
+  - Created `sqflite_dev_stub.dart` to handle cases where `sqflite_dev` is not available
+  - Web debug UI feature now works gracefully whether or not `sqflite_dev` is in user's dependencies
+* Fixed all pub.dev validation issues
+  - Package now passes `dart pub publish --dry-run` validation
+  - All imports in `lib/` directory now use proper dependency declarations
+
 ## 0.1.11
 
 * Added constructor documentation for remaining public classes
