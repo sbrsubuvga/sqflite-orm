@@ -15,8 +15,9 @@ import 'package:sqflite_common/sqlite_api.dart'
 import 'database_factory_stub.dart'
     if (dart.library.io) 'database_factory_io.dart';
 
-// Import sqflite_dev - it supports both Flutter and pure Dart
-import 'package:sqflite_dev/sqflite_dev.dart';
+// Import helper for optional sqflite_dev support
+// This will work whether or not sqflite_dev is available
+import 'sqflite_dev_stub.dart';
 
 /// Main database manager for cross-platform SQLite operations
 class DatabaseManager {
@@ -145,7 +146,9 @@ class DatabaseManager {
       try {
         // Use sqflite_dev to enable workbench (web UI) for the database
         // sqflite_dev supports both Flutter and pure Dart
-        manager.database.enableWorkbench(
+        // This will work if sqflite_dev is available, otherwise it's a no-op
+        enableWorkbenchIfAvailable(
+          manager.database,
           name: 'sqflite_orm',
           port: webDebugPort,
         );
