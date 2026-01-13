@@ -1,3 +1,15 @@
+## 0.1.9
+
+* Enhanced dartdoc documentation for public API properties and constructors
+* Added comprehensive documentation for DatabaseManager public properties (path, version, models, onUpgrade, onCreate)
+* Documented WhereClause public properties (conditions, arguments)
+* Added constructor documentation for all annotation classes (Table, Column, PrimaryKey, ForeignKey)
+* Enhanced SimpleModelRegistrar with detailed method documentation and examples
+* Improved QueryBuilder method documentation (where, equals, greaterThan, lessThan)
+* Added SchemaValidationError constructor documentation
+* All public APIs now have comprehensive dartdoc comments meeting 20%+ coverage requirement
+* Fixed dependency resolution issues preventing dartdoc from running
+
 ## 0.1.8
 
 * Added comprehensive dartdoc documentation for all public APIs
